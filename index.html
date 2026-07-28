@@ -6,7 +6,7 @@
     <title>Max Joseph Holly</title>
     
     <!-- M Favicon using inline SVG -->
-    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>">
+    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>">
     
     <!-- Google Fonts: Cormorant Garamond -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,8 +14,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CSS Variables for Light/Dark Theme --- */
+        /* --- CSS Variables for Theme System (Slate Dark Default) --- */
         :root {
+            /* Slate Dark Palette (Default) */
+            --bg-color: #1a1c23;         
+            --text-main: #e2e4e9;        
+            --accent-color: #ffffff;     
+            --text-muted: #8b92a5;       
+            --border-color: #2d313d;     
+            --cursor-dot: #ffffff;
+            --cursor-outline: rgba(255, 255, 255, 0.5);
+            --cursor-hover: rgba(255, 255, 255, 0.15);
+            --hitbox-bg: transparent; 
+            
+            /* Global Animation Speeds */
+            --top-speed: 15s;
+            --bottom-speed: 5s;
+        }
+
+        body.theme-light {
             /* Light Sepia Palette */
             --bg-color: #f4ecd8;         
             --text-main: #3a332a;        
@@ -25,24 +42,30 @@
             --cursor-dot: #000000;
             --cursor-outline: rgba(0, 0, 0, 0.5);
             --cursor-hover: rgba(0, 0, 0, 0.08);
-            --hitbox-bg: transparent; 
-            
-            /* Global Animation Speeds */
-            --top-speed: 15s;
-            --bottom-speed: 5s;
         }
 
-        body.dark-theme {
-            /* Dark Theme Palette */
-            --bg-color: #121212;
-            --text-main: #e0e0e0;
-            --accent-color: #ffffff; 
-            --text-muted: #a0a0a0;
-            --border-color: #333333; 
+        body.theme-pure-white {
+            /* Pure White Palette */
+            --bg-color: #ffffff;         
+            --text-main: #111111;        
+            --accent-color: #000000;     
+            --text-muted: #666666;       
+            --border-color: #eeeeee;     
+            --cursor-dot: #000000;
+            --cursor-outline: rgba(0, 0, 0, 0.5);
+            --cursor-hover: rgba(0, 0, 0, 0.08);
+        }
+
+        body.theme-pure-black {
+            /* Pure Black Palette */
+            --bg-color: #000000;         
+            --text-main: #eeeeee;        
+            --accent-color: #ffffff;     
+            --text-muted: #888888;       
+            --border-color: #222222;     
             --cursor-dot: #ffffff;
             --cursor-outline: rgba(255, 255, 255, 0.5);
             --cursor-hover: rgba(255, 255, 255, 0.15);
-            --hitbox-bg: transparent;
         }
 
         /* Base Reset & Styling */
@@ -70,6 +93,12 @@
 
         body.loading {
             overflow: hidden;
+        }
+
+        /* Hide Theme Switcher During Load */
+        body.loading #theme-switcher {
+            opacity: 0;
+            visibility: hidden;
         }
 
         /* --- GEOMETRIC DYNAMIC BACKGROUNDS --- */
@@ -291,7 +320,7 @@
             top: 0;
             left: 0;
             border-radius: 50%;
-            z-index: 9999;
+            z-index: 999999;
             pointer-events: none;
             will-change: transform;
             /* Start hidden off-screen to avoid blip on load */
@@ -371,25 +400,45 @@
             }
         }
 
-        /* --- Theme Toggle Button --- */
-        #theme-toggle {
+        /* --- Theme Switcher (Top Right Palette) --- */
+        #theme-switcher {
             position: absolute; /* Fixed to top of document, scrolls away */
             top: 25px;
             right: 25px;
-            background: none;
-            border: none;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            color: var(--accent-color);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: auto; 
+            gap: 12px;
+            z-index: 99999;
+            pointer-events: auto;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
-        #theme-toggle:hover {
-            transform: scale(1.15) rotate(15deg);
+        .theme-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(128, 128, 128, 0.5);
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            pointer-events: auto;
         }
+
+        .theme-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .theme-btn.active {
+            transform: scale(1.3);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 1px var(--accent-color);
+        }
+
+        #btn-dark { background-color: #1a1c23; }
+        #btn-light { background-color: #f4ecd8; }
+        #btn-pure-white { background-color: #ffffff; }
+        #btn-pure-black { background-color: #000000; }
 
         /* --- Fade-in Animation Classes --- */
         .fade-in {
@@ -409,7 +458,7 @@
             position: relative;
             z-index: 10;
             margin: 0 auto; 
-            max-width: 1350px; /* Restored to previous wider width */
+            max-width: 1350px; 
             padding-top: 35vh; 
             /* Buffer ensures content never collides with absolute bottom nodes */
             padding-bottom: 45vh; 
@@ -774,10 +823,36 @@
             padding: 30px 0;
             border-bottom: 1px solid var(--border-color);
             transition: border-color 0.4s ease;
+            position: relative;
         }
 
         .project-list li:last-child {
             border-bottom: none;
+        }
+
+        /* Badges Styling */
+        .badges-container {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            display: flex;
+            gap: 8px;
+            pointer-events: none;
+        }
+        
+        .projects-columns .project-list li .badges-container {
+            top: 20px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         /* Special divider class for Fearful Symmetries sub-sections */
@@ -823,6 +898,7 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 8px;
+            max-width: 85%; /* Ensures titles don't clash with right-aligned badges */
         }
 
         .project-link-title {
@@ -871,10 +947,34 @@
             }
         }
 
-        /* --- Bottom Projects Section --- */
+        /* --- Bottom Projects Section Columns --- */
+        .projects-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 30px;
+            width: 100%;
+        }
+
         #projects .project-list {
-            max-width: 800px; 
-            margin: 0 auto;
+            max-width: 100%; 
+            margin: 0;
+        }
+
+        .projects-columns .project-list li {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .projects-columns .project-list li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 800px) {
+            .projects-columns {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
         }
 
         /* --- Direct Email Contact --- */
@@ -969,7 +1069,7 @@
 </head>
 <body class="loading">
 
-    <!-- Top Left Navigation (Horizontal) -->
+    <!-- Top Left Navigation (Absolute - scrolls away) -->
     <nav class="nav-links">
         <a href="#home" class="interactive-element">About</a>
         <a href="#writings" class="interactive-element">Writings</a>
@@ -977,9 +1077,16 @@
         <a href="#contact" class="interactive-element">Contact</a>
     </nav>
 
+    <!-- Theme Switcher (Top Right Palette) -->
+    <div id="theme-switcher">
+        <button id="btn-dark" class="theme-btn active interactive-element" aria-label="Dark Theme" title="Dark Theme"></button>
+        <button id="btn-light" class="theme-btn interactive-element" aria-label="Light Sepia Theme" title="Light Sepia Theme"></button>
+        <button id="btn-pure-white" class="theme-btn interactive-element" aria-label="Pure White Theme" title="Pure White Theme"></button>
+        <button id="btn-pure-black" class="theme-btn interactive-element" aria-label="Pure Black Theme" title="Pure Black Theme"></button>
+    </div>
+
     <!-- Top Geometric Animation (Blueprint/Astrolabe) -->
     <div id="geo-sky">
-        <!-- Large Main Astrolabe (Center) -->
         <div class="astrolabe">
             <div class="geo-ring"></div>
             <div class="geo-node-container">
@@ -1061,7 +1168,6 @@
             </div>
         </div>
         
-        <!-- Duplicated array to stretch seamlessly across wider screens -->
         <div class="node-pillar" style="--mb: 26vh; --del: -3.5s;">
             <div class="pillar-float">
                 <div class="pillar-inner">
@@ -1106,26 +1212,6 @@
         </div>
     </div>
 
-    <!-- Monochrome Theme Toggle -->
-    <button id="theme-toggle" class="interactive-element" aria-label="Toggle Theme" title="Toggle Theme (Press 't')">
-        <!-- Moon Icon -->
-        <svg id="moon-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-        <!-- Sun Icon -->
-        <svg id="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-    </button>
-
     <!-- Loading Screen (Domino 'M' Animation) -->
     <div id="loader">
         <div class="domino-wrapper">
@@ -1163,14 +1249,14 @@
             <!-- Writings Section -->
             <section id="writings" class="section-container fade-in">
                 <h2>Writings</h2>
-                <p>Collections of writings and projects (56).</p>
+                <p>Collections of writings and projects (58).</p>
                 
                 <div class="tabs-wrapper">
                     <!-- Tab Navigation -->
                     <div class="tabs-nav">
                         <!-- Group 1 -->
                         <button class="tab-btn active interactive-element" onclick="openTab(event, 'tab1')">
-                            <span class="tab-count">4</span> <span class="tab-title-text">New Notes on The Metacrisis</span>
+                            <span class="tab-count">6</span> <span class="tab-title-text">New Notes on The Metacrisis</span>
                         </button>
                         <button class="tab-btn interactive-element" onclick="openTab(event, 'tab2')">
                             <span class="tab-count">2</span> <span class="tab-title-text">Macrostrategy</span>
@@ -1223,6 +1309,7 @@
                         </div>
                         <ul class="project-list">
                             <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1YCAwMAnJDku3bKSVsPVxxW29SfZ0YTbIwpneE9ermwo/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
                                         <h3>The Two Subcultures</h3>
@@ -1244,9 +1331,26 @@
                                 </div>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1m5JwBJ5gkm1XqvuUsdYPvDxkQWB0ZAQUFiSfTymYcgE/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
                                         <h3>Civilisation is Solving Collective Action Problems</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1h5KBmUvdxCKpiXg3haWZM7XuegsW1BZNRodUkKm6Mwg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Sensemaking Crises: Darwinian, Cartesian, Nietzschean</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1h5KBmUvdxCKpiXg3haWZM7XuegsW1BZNRodUkKm6Mwg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Wisdom Gaps: Moral, Structural, Epistemic</h3>
                                     </a>
                                 </div>
                             </li>
@@ -1261,6 +1365,7 @@
                         </div>
                         <ul class="project-list">
                             <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/u/0/d/17lE5zu1AEPT-STuiQJv7ekbEqvbPyeo_yC2xFTLhW44/edit" target="_blank" class="project-link-title interactive-element">
                                         <h3>Post-Scarcity?: Conceptual Deconfusion</h3>
@@ -1285,6 +1390,7 @@
                         </div>
                         <ul class="project-list">
                             <li>
+                                <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
                                         <h3>Solving the Generator Functions (of the Generator Functions) of Existential Risk</h3>
@@ -1293,6 +1399,7 @@
                                 <p>Zero-sum games are multi-agent behaviours emergent from conditions of material scarcity and cultural divergence</p>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.w99kgcmb21v0" target="_blank" class="project-link-title interactive-element">
                                         <h3>Solving the Generative Processes of Existential Risk: Military-Economic Adaptationism, Techno-Capital Acceleration & Cultural-Psychological Conditioning</h3>
@@ -1301,6 +1408,7 @@
                                 <p>A macrohistorical ‘process philosophy’ of existential risk from universal darwinian selection and replicator misalignment</p>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.m9agpw68ne40" target="_blank" class="project-link-title interactive-element">
                                         <h3>Solving the Generative Coordination & Alignment Problems of AI X-Risk</h3>
@@ -1327,6 +1435,7 @@
                                 <p>Catalysing a second enlightenment to steer the fourth industrial revolution and the Age of AGI</p>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1CZBGup-MKHnMJW2A8lOj9LKgQtPXfbLUBmamKvlgrbk/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
                                         <h3>Towards UTOPIA: A Unified Theory of the Principles of Intelligence Alignment</h3>
@@ -1335,6 +1444,7 @@
                                 <p>Advancing a new cybernetics for the holistic alignment, control and interpretability of the human and the machine</p>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1gxlWxFp0KfiR2oaWTwrxZFJE8nx79hXXGL-ylK1-93w/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
                                         <h3>Civilisation X: The Design of a Viable World-System</h3>
@@ -1424,6 +1534,7 @@
                                 <p>Using conceptual engineering to arrive at a clearer definition of the metacrisis</p>
                             </li>
                             <li>
+                                <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                 <p class="project-quote"><em>‘I had no need of that hypothesis’</em></p>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1m_xW7T_NYB_BJEQQ9m00D3W2kg5m0DpqXEATxkZDSfg/preview" target="_blank" class="project-link-title interactive-element">
@@ -1433,6 +1544,10 @@
                                 <p>A sequence on metacrisis meta-theory (social ontology), conceptual analysis and the philosophy of causation</p>
                             </li>
                             <li>
+                                <div class="badges-container">
+                                    <span class="badge">WIP</span>
+                                    <span class="badge">AI-Assisted</span>
+                                </div>
                                 <p class="project-quote"><em>‘Our civilization is characterised by the word ‘progress’ - progress is its form rather than making progress one of its features’</em></p>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1tBfTkNXSrhVo_lT2EfREY2bC-VWf_7rjETZ8_-9_dyI/preview" target="_blank" class="project-link-title interactive-element">
@@ -1551,6 +1666,7 @@
                                     <p>On the symmetry between Leibniz’s ‘best of all possible worlds’ theodicy and Fukuyama’s ‘end of history’ thesis</p>
                                 </li>
                                 <li>
+                                    <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                     <p class="project-quote"><em>‘Man will never be able to know what money is any more than he will be able to know what God is’</em></p>
                                     <div class="project-title-wrapper">
                                         <a href="https://sites.google.com/view/civilisationalmechanics/capitalist-theodicy/evolutionary?authuser=0" target="_blank" class="project-link-title interactive-element">
@@ -1566,6 +1682,7 @@
                         <div id="subtab-alien" class="subtab-content">
                             <ul class="project-list">
                                 <li>
+                                    <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                     <p class="project-quote"><em>‘An evil demon, not less powerful than deceitful, has employed his whole energies in deceiving me’</em></p>
                                     <div class="project-title-wrapper">
                                         <a href="https://sites.google.com/d/1g12Ks6rrfDZRklv6sXQuZ-zyW7h5qmJ4/p/1QwwtcyXQyze5M0aDSTusWUZhS037L2oX/edit" target="_blank" class="project-link-title interactive-element">
@@ -1615,6 +1732,9 @@
                         
                         <!-- Subtab 5: Paragons -->
                         <div id="subtab-paragons" class="subtab-content">
+                            <div style="width: 100%; display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                                <span class="badge">AI-Assisted</span>
+                            </div>
                             <ul class="project-list">
                                 <li>
                                     <div class="project-title-wrapper">
@@ -1839,6 +1959,7 @@
                         </div>
                         <ul class="project-list">
                             <li>
+                                <div class="badges-container"><span class="badge">AI-Assisted</span></div>
                                 <p class="project-quote"><em>‘The assumption that what currently exists must necessarily exist is the acid that corrodes all visionary thinking.’</em></p>
                                 <div class="project-title-wrapper">
                                     <a href="https://docs.google.com/document/d/1p96cg9Fa-3OIGMj4S_WGlZ7iqO4Vswvjm9jVsZiwH2c/preview" target="_blank" class="project-link-title interactive-element">
@@ -1856,53 +1977,75 @@
             <!-- Projects Section -->
             <section id="projects" class="section-container fade-in">
                 <h2>Projects</h2>
-                <ul class="project-list">
-                    <li>
-                        <p class="project-quote"><em>Glossary/Wiki</em></p>
-                        <div class="project-title-wrapper">
-                            <a href="https://maxramsahoye.github.io/civilisationtheory" target="_blank" class="project-link-title interactive-element">
-                                <h3>&mdash; Civilisation Theory</h3>
-                            </a>
-                        </div>
-                        <p>A conceptual adaptive system</p>
-                    </li>
-                    <li>
-                        <p class="project-quote"><em>Course</em></p>
-                        <div class="project-title-wrapper">
-                            <a href="https://docs.google.com/document/d/1tfhKQxr0g3SqPQcEINfQW--HZK9F5_2XIJvDvLOAuMU/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
-                                <h3>&mdash; Coordination (Studies) Fundamentals</h3>
-                            </a>
-                        </div>
-                        <p>introducing researchers in AI strategy to a new field targeted towards solving coordination problems and designing new coordination mechanisms</p>
-                    </li>
-                    <li>
-                        <p class="project-quote"><em>Literature Map</em></p>
-                        <div class="project-title-wrapper">
-                            <a href="https://cybersynergetic.com" target="_blank" class="project-link-title interactive-element">
-                                <h3>&mdash; Cybersynergetic</h3>
-                            </a>
-                        </div>
-                        <p>A literature map of the civilisational superintelligence alignment problem</p>
-                    </li>
-                    <li>
-                        <p class="project-quote"><em>Timeline</em></p>
-                        <div class="project-title-wrapper">
-                            <a href="https://molochian.agency" target="_blank" class="project-link-title interactive-element">
-                                <h3>&mdash; Molochian</h3>
-                            </a>
-                        </div>
-                        <p>The (in)human history of a memetic entity</p>
-                    </li>
-                    <li>
-                        <p class="project-quote"><em>Reading List</em></p>
-                        <div class="project-title-wrapper">
-                            <a href="https://docs.google.com/document/d/1Qj85wI0mtgWq4Mv5NA8lbBILMn8iQIbHrYHuFIK4xpw/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
-                                <h3>&mdash; Redteaming Effective Altruism Fellowship</h3>
-                            </a>
-                        </div>
-                        <p>on the epistemics, redteaming and criticism (R&C) of actually-existing EA</p>
-                    </li>
-                </ul>
+                
+                <div class="projects-columns">
+                    <!-- Left Column -->
+                    <div class="projects-left">
+                        <ul class="project-list">
+                            <li>
+                                <div class="badges-container"><span class="badge">WIP</span></div>
+                                <p class="project-quote"><em>Glossary/Wiki</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://maxramsahoye.github.io/civilisationtheory" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Civilisation Theory</h3>
+                                    </a>
+                                </div>
+                                <p>A conceptual adaptive system</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>Literature Map</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://cybersynergetic.com" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Cybersynergetic</h3>
+                                    </a>
+                                </div>
+                                <p>A literature map of the civilisational superintelligence alignment problem</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>Timeline</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://maxramsahoye1.wixstudio.com/molochian" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Molochian</h3>
+                                    </a>
+                                </div>
+                                <p>The (in)human history of a memetic entity</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="projects-right">
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>Course</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1tfhKQxr0g3SqPQcEINfQW--HZK9F5_2XIJvDvLOAuMU/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Coordination (Studies) Fundamentals</h3>
+                                    </a>
+                                </div>
+                                <p>introducing researchers in AI strategy to a new field targeted towards solving coordination problems and designing new coordination mechanisms</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>Reading List</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1Qj85wI0mtgWq4Mv5NA8lbBILMn8iQIbHrYHuFIK4xpw/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Redteaming Effective Altruism Fellowship</h3>
+                                    </a>
+                                </div>
+                                <p>on the epistemics, redteaming and criticism (R&C) of actually-existing EA</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>Reading List</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1Ycc9ONbqi7IqL4yHg86EteVg3NJBaySBMA-Q8bXPAXA/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>&mdash; Sensemaking Summerschool</h3>
+                                    </a>
+                                </div>
+                                <p>for a foundational understanding of the current civilisational condition we are in: the metacrisis and metamodernism</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
             <!-- Contact Section -->
@@ -1920,6 +2063,14 @@
         <footer>
             <p class="fade-in">&copy; 2026 Max Joseph Holly</p>
         </footer>
+    </div>
+
+    <!-- Theme Switcher (Top Right Palette) -->
+    <div id="theme-switcher">
+        <button id="btn-dark" class="theme-btn active interactive-element" aria-label="Dark Theme" title="Dark Theme"></button>
+        <button id="btn-light" class="theme-btn interactive-element" aria-label="Light Sepia Theme" title="Light Sepia Theme"></button>
+        <button id="btn-pure-white" class="theme-btn interactive-element" aria-label="Pure White Theme" title="Pure White Theme"></button>
+        <button id="btn-pure-black" class="theme-btn interactive-element" aria-label="Pure Black Theme" title="Pure Black Theme"></button>
     </div>
 
     <!-- Back to top arrow -->
@@ -2040,8 +2191,8 @@
                 document.body.classList.remove('cursor-hover');
             });
             el.addEventListener('click', (e) => {
-                // Ensure theme button handles its own sound
-                if(!e.target.closest('#theme-toggle') && !e.target.classList.contains('tab-btn') && !e.target.classList.contains('subtab-btn')) {
+                // Ensure theme switcher buttons handle their own sound
+                if(!e.target.closest('#theme-switcher') && !e.target.classList.contains('tab-btn') && !e.target.classList.contains('subtab-btn')) {
                     playClickSound();
                 }
             });
@@ -2103,36 +2254,43 @@
             playClickSound();
         }
 
-        // --- Theme Toggle Logic (Including Favicon Update) ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const moonIcon = document.getElementById('moon-icon');
-        const sunIcon = document.getElementById('sun-icon');
-        const favicon = document.getElementById('favicon');
-        let isDarkMode = false;
-        
-        // Define light and dark favicon SVGs
-        const faviconLight = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>';
-        const faviconDark = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>';
+        // --- Theme Switcher Logic ---
+        const themes = ['dark', 'light', 'pure-white', 'pure-black'];
+        let currentThemeIndex = 0;
 
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-theme', isDarkMode);
+        function setTheme(themeName) {
+            document.body.classList.remove('theme-light', 'theme-pure-white', 'theme-pure-black');
+            if (themeName !== 'dark') {
+                document.body.classList.add(`theme-${themeName}`);
+            }
             
-            // Toggle SVG visibility
-            moonIcon.style.display = isDarkMode ? 'none' : 'block';
-            sunIcon.style.display = isDarkMode ? 'block' : 'none';
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${themeName}`).classList.add('active');
+
+            const favicon = document.getElementById('favicon');
+            const faviconLight = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>';
+            const faviconDark = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>';
+
+            if (themeName === 'light' || themeName === 'pure-white') {
+                favicon.href = faviconLight;
+                playThemeSound(false);
+            } else {
+                favicon.href = faviconDark;
+                playThemeSound(true);
+            }
             
-            // Toggle Favicon
-            favicon.href = isDarkMode ? faviconDark : faviconLight;
-            
-            playThemeSound(isDarkMode);
+            currentThemeIndex = themes.indexOf(themeName);
         }
 
-        themeToggleBtn.addEventListener('click', toggleTheme);
+        document.getElementById('btn-dark').addEventListener('click', () => setTheme('dark'));
+        document.getElementById('btn-light').addEventListener('click', () => setTheme('light'));
+        document.getElementById('btn-pure-white').addEventListener('click', () => setTheme('pure-white'));
+        document.getElementById('btn-pure-black').addEventListener('click', () => setTheme('pure-black'));
 
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 't') {
-                toggleTheme();
+                currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                setTheme(themes[currentThemeIndex]);
             }
         });
 
