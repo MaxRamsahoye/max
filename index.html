@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Joseph Holly</title>
+    
+    <!-- M Favicon using inline SVG -->
+    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>">
+    
+    <!-- Google Fonts: Cormorant Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Variables for Light/Dark Theme --- */
+        :root {
+            /* Light Sepia Palette */
+            --bg-color: #f4ecd8;         
+            --text-main: #3a332a;        
+            --accent-color: #000000;     
+            --text-muted: #7a6e60;       
+            --border-color: #d5c7b3;     
+            --cursor-dot: #000000;
+            --cursor-outline: rgba(0, 0, 0, 0.5);
+            --cursor-hover: rgba(0, 0, 0, 0.08);
+            --hitbox-bg: transparent; 
+            
+            /* Global Animation Speeds */
+            --top-speed: 15s;
+            --bottom-speed: 5s;
+        }
+
+        body.dark-theme {
+            /* Dark Theme Palette */
+            --bg-color: #121212;
+            --text-main: #e0e0e0;
+            --accent-color: #ffffff; 
+            --text-muted: #a0a0a0;
+            --border-color: #333333; 
+            --cursor-dot: #ffffff;
+            --cursor-outline: rgba(255, 255, 255, 0.5);
+            --cursor-hover: rgba(255, 255, 255, 0.15);
+            --hitbox-bg: transparent;
+        }
+
+        /* Base Reset & Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none !important; 
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
+        /* --- GEOMETRIC DYNAMIC BACKGROUNDS --- */
+
+        /* TOP: The Blueprint (Theory/Mind) */
+        #geo-sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 45vh;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* The Astrolabe Container acts as our large, reliable hover hit-zone */
+        .astrolabe {
+            position: absolute;
+            top: 50%; 
+            left: 50%;
+            margin-top: -175px; 
+            margin-left: -175px; 
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            pointer-events: auto; 
+            cursor: pointer;
+            z-index: 10;
+            background-color: var(--hitbox-bg); 
+        }
+
+        /* The Focal Ring */
+        .geo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px;
+            margin-left: -100px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid var(--accent-color);
+            border-radius: 50%;
+            opacity: 0.5; 
+            transition: border-color 0.4s ease;
+            backface-visibility: hidden;
+            transform: translateZ(0); /* Hardware anti-aliasing */
+        }
+
+        /* Orbiting Concept Node */
+        .geo-node-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px; 
+            margin-left: -100px; 
+            width: 200px;
+            height: 200px;
+            animation: orbit var(--top-speed) linear infinite;
+            will-change: transform; 
+        }
+
+        .geo-node {
+            position: absolute;
+            top: -4px; 
+            left: 50%;
+            margin-left: -4px; /* Hard integer positioning */
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            opacity: 1; 
+            transition: background-color 0.4s ease;
+            backface-visibility: hidden;
+            transform: translateZ(0); /* Hardware anti-aliasing */
+        }
+
+        @keyframes orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* BOTTOM: Node Pillars (Civilisation/Foundation) */
+        #geo-foundation {
+            position: absolute;
+            bottom: 0; 
+            left: 0;
+            right: 0;
+            height: 30vh; 
+            display: flex;
+            align-items: stretch; 
+            justify-content: space-evenly;
+            padding: 0 1vw;
+            z-index: 0;
+            pointer-events: none; 
+            overflow: hidden;
+        }
+
+        /* Sub-pixel rendering fix: Rigid integer layouts */
+        .node-pillar {
+            position: relative;
+            width: 41px; /* Odd width allows a 1px line to sit dead-center natively */
+            flex-shrink: 0; /* Prevents flexbox from squishing and breaking the pixel grid */
+            height: 100%; 
+            pointer-events: auto; 
+            cursor: pointer;
+            background-color: var(--hitbox-bg); 
+        }
+
+        .pillar-float {
+            position: absolute;
+            top: calc(100% - var(--mb)); 
+            left: 0; 
+            width: 100%; 
+            height: 0;
+            /* Using bottom-speed / 2 ensures a full alternate cycle (up and down) equals the exact bottom-speed */
+            animation: floatNode calc(var(--bottom-speed) / 2) ease-in-out infinite alternate;
+            animation-delay: var(--del);
+        }
+
+        .pillar-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 2s ease-in-out; 
+        }
+
+        .node-pillar:hover .pillar-inner {
+            transform: translateY(30vh); 
+        }
+
+        .node {
+            position: absolute;
+            left: 17px; /* Matches center pixel 20 */
+            top: -3px; 
+            width: 7px; /* True minimum for perfect hollow rendering */
+            height: 7px; 
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            /* We use a shadow to draw the hollow center without border clipping the circle shape */
+            box-shadow: inset 0 0 0 1px var(--accent-color); 
+            z-index: 2;
+            opacity: 1; 
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+            backface-visibility: hidden;
+            transform: translateZ(0); /* Hardware vector anti-aliasing */
+        }
+
+        .node.solid {
+            background-color: var(--accent-color);
+            box-shadow: none;
+        }
+
+        .stem {
+            position: absolute;
+            left: 20px; /* Aligns perfectly down center pixel 20 */
+            top: 4px; 
+            width: 1px;
+            height: 35vh; /* Cleanly exits the bottom of the screen without excess length */
+            background-color: var(--accent-color);
+            opacity: 0.5; 
+            transition: background-color 0.4s ease;
+        }
+
+        @keyframes floatNode {
+            0% { transform: translateY(1.5vh); }
+            100% { transform: translateY(-1.5vh); }
+        }
+
+        /* --- Loading Screen (Domino M Animation) --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .domino-wrapper {
+            position: relative;
+            width: 60px; 
+            height: 50px;
+            transform: scale(1.5);
+        }
+
+        .domino {
+            width: 10px;
+            height: 50px;
+            background-color: var(--accent-color);
+            position: absolute;
+            bottom: 0;
+            border-radius: 2px;
+            transform-origin: bottom center;
+        }
+
+        .d1 { left: 0; }
+        .d2 { left: 20px; animation: fallLeft 0.5s 0.4s forwards cubic-bezier(0.4, 0.0, 0.2, 1); }
+        .d3 { left: 30px; animation: fallRight 0.5s 0.6s forwards cubic-bezier(0.4, 0.0, 0.2, 1); }
+        .d4 { left: 50px; }
+
+        @keyframes fallLeft {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-22.5deg); }
+        }
+
+        @keyframes fallRight {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(22.5deg); }
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            will-change: transform;
+            /* Start hidden off-screen to avoid blip on load */
+            transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+            backface-visibility: hidden; /* Force GPU composite layer */
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--cursor-dot);
+            transition: background-color 0.4s ease;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--cursor-outline);
+            transition: width 0.2s ease-out, height 0.2s ease-out, margin 0.2s ease-out, background-color 0.2s ease-out, border-color 0.4s ease;
+        }
+
+        .cursor-hover .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: var(--cursor-hover);
+            border-color: transparent;
+        }
+
+        /* --- Fixed Top Menu Navigation (Horizontal) --- */
+        .nav-links {
+            position: absolute; /* Fixed to top of document, scrolls away */
+            top: 25px;
+            left: 25px;
+            display: flex;
+            flex-direction: row; 
+            justify-content: flex-start;
+            align-items: center;
+            gap: 30px; 
+            z-index: 1000;
+            pointer-events: auto; 
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            padding-bottom: 2px;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1.5px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.2s ease, background-color 0.4s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 800px) {
+            .nav-links {
+                left: 50%;
+                transform: translateX(-50%);
+                gap: 20px;
+            }
+        }
+
+        /* --- Theme Toggle Button --- */
+        #theme-toggle {
+            position: absolute; /* Fixed to top of document, scrolls away */
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto; 
+        }
+
+        #theme-toggle:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        /* --- Fade-in Animation Classes --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- MAIN CONTENT SECTIONS --- */
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            margin: 0 auto; 
+            max-width: 1350px; /* Restored to previous wider width */
+            padding-top: 35vh; 
+            /* Buffer ensures content never collides with absolute bottom nodes */
+            padding-bottom: 45vh; 
+            pointer-events: none; 
+        }
+
+        /* Restore pointer events only on the actual text/content */
+        .hero-container, .section-container, footer {
+            pointer-events: auto; 
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px 80px 20px;
+        }
+
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .hero-text-wrapper {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 3rem; 
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--accent-color);
+            line-height: 1.1;
+            transition: color 0.4s ease;
+        }
+
+        .subtitle {
+            font-size: 1.6rem; 
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-main); 
+            margin-top: 8px; 
+            margin-bottom: 0; 
+            transition: color 0.4s ease;
+        }
+        
+        .about-description {
+            margin-top: 35px;
+            max-width: 650px;
+        }
+        
+        .about-description p {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            text-align: center;
+            margin-bottom: 15px;
+            transition: color 0.4s ease;
+        }
+
+        .about-description p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 800px) {
+            .hero-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 25px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        h2 {
+            font-size: 2.4rem; 
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--accent-color);
+            transition: color 0.4s ease;
+        }
+
+        .section-container {
+            width: 100%; 
+            padding: 40px 20px; 
+        }
+
+        .section-container > p, .section-container > h2 {
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-container > p {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            text-align: center;
+            margin-bottom: 15px;
+            transition: color 0.4s ease;
+        }
+
+        /* --- Tabs System for Writings (Vertical Left Layout) --- */
+        .tabs-wrapper {
+            margin-top: 50px;
+            max-width: 100%; 
+            display: flex;
+            align-items: stretch; /* Extends vertical divider perfectly */
+            gap: 60px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 15px;
+            min-width: 400px; 
+            max-width: 400px;
+            border-right: 1px solid var(--border-color);
+            padding-right: 20px;
+        }
+
+        .tab-break {
+            flex: none; /* Prevents stretching and distributing items out of alignment */
+            width: 100%;
+            height: 15px;
+        }
+
+        /* Tab Buttons with Left Counter */
+        .tab-btn {
+            flex: none; /* Prevents button itself from stretching */
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            cursor: pointer;
+            padding: 5px 0px; 
+            text-align: left;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        .tab-count {
+            font-weight: 400;
+            font-size: 1rem;
+            opacity: 0.6;
+            min-width: 18px;
+            text-align: right;
+        }
+
+        .tab-title-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            white-space: nowrap; 
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .tab-title-text::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px; 
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+        }
+
+        .tab-btn.active .tab-title-text::after {
+            width: 100%;
+        }
+
+        /* --- Sub-Tabs System (Horizontal) --- */
+        .subtabs-nav {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .subtab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0; 
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .subtab-btn::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -16px; 
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .subtab-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .subtab-btn.active {
+            color: var(--accent-color);
+        }
+
+        .subtab-btn.active::after {
+            width: 100%;
+        }
+
+        .subtab-content {
+            display: none;
+            animation: fadeInTab 0.5s ease;
+        }
+
+        .tab-content {
+            flex: 1; 
+            min-width: 0; 
+            display: none;
+            animation: fadeInTab 0.5s ease;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1000px) {
+            .tabs-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .tabs-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                min-width: 100%;
+                max-width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding-right: 0;
+                padding-bottom: 15px;
+            }
+            .tab-btn {
+                padding: 5px 10px;
+            }
+            .subtabs-nav {
+                gap: 15px;
+            }
+        }
+
+        /* --- Tab Content Header --- */
+        .tab-header {
+            margin-top: 50px; 
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .tab-header-title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .tab-header-title-row h3 {
+            margin-bottom: 0;
+        }
+
+        .tab-header-title-link {
+            text-decoration: none;
+            color: var(--accent-color);
+            transition: opacity 0.3s ease;
+        }
+
+        .tab-header-title-link:hover {
+            opacity: 0.7;
+        }
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: color 0.3s ease, transform 0.3s ease;
+            margin-top: 2px;
+        }
+
+        .info-icon:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .tab-quote {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        .tab-header h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            transition: color 0.4s ease;
+        }
+
+        .tab-header p {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            transition: color 0.4s ease;
+            max-width: 800px;
+        }
+
+        /* Adjust project list margin inside tabs */
+        .tabs-wrapper .project-list {
+            margin-top: 0;
+        }
+
+        /* Project List Elements */
+        .project-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 0;
+        }
+
+        .project-list li {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: border-color 0.4s ease;
+        }
+
+        .project-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Special divider class for Fearful Symmetries sub-sections */
+        .project-list li.project-divider {
+            border-bottom: none;
+            padding: 30px 0 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .project-section-break {
+            align-self: center;
+            color: var(--border-color);
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            transition: color 0.4s ease;
+        }
+
+        .project-section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0;
+            transition: color 0.4s ease;
+        }
+        
+        /* Quotation styling */
+        .project-list p.project-quote {
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 8px; 
+            margin-top: 0;
+        }
+
+        /* --- Project Title Links --- */
+        .project-title-wrapper {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .project-link-title {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-link-title h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0; 
+            transition: opacity 0.3s ease, transform 0.3s ease, color 0.4s ease;
+            line-height: 1.3;
+        }
+
+        .project-link-title:hover h3 {
+            transform: translateX(5px); 
+            opacity: 0.7;
+        }
+
+        .project-list p {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            text-align: left;
+            transition: color 0.4s ease;
+            max-width: 800px;
+        }
+
+        /* --- Paragons 2-Column Grid --- */
+        #subtab-paragons .project-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        #subtab-paragons .project-list li {
+            border-bottom: none;
+            padding: 15px 0;
+        }
+
+        @media (max-width: 800px) {
+            #subtab-paragons .project-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Bottom Projects Section --- */
+        #projects .project-list {
+            max-width: 800px; 
+            margin: 0 auto;
+        }
+
+        /* --- Direct Email Contact --- */
+        .contact-email-container {
+            text-align: center;
+            margin-top: 50px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .email-link {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 2px;
+            transition: color 0.4s ease;
+        }
+
+        .email-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: transform 0.3s ease, background-color 0.4s ease;
+            transform-origin: bottom right;
+            transform: scaleX(1);
+        }
+
+        .email-link:hover::after {
+            transform-origin: bottom left;
+            transform: scaleX(0);
+        }
+        
+        .email-link:hover {
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 600px) {
+            .email-link {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* --- Back to Top Button --- */
+        #back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px; 
+            height: 45px; 
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            pointer-events: auto; 
+            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+            text-decoration: none;
+            z-index: 999;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+        }
+
+        #back-to-top:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            transform: translateY(-4px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px; 
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            transition: color 0.4s ease;
+        }
+    </style>
+</head>
+<body class="loading">
+
+    <!-- Top Left Navigation (Horizontal) -->
+    <nav class="nav-links">
+        <a href="#home" class="interactive-element">About</a>
+        <a href="#writings" class="interactive-element">Writings</a>
+        <a href="#projects" class="interactive-element">Projects</a>
+        <a href="#contact" class="interactive-element">Contact</a>
+    </nav>
+
+    <!-- Top Geometric Animation (Blueprint/Astrolabe) -->
+    <div id="geo-sky">
+        <!-- Large Main Astrolabe (Center) -->
+        <div class="astrolabe">
+            <div class="geo-ring"></div>
+            <div class="geo-node-container">
+                <div class="geo-node"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Geometric Animation (Data Nodes) -->
+    <div id="geo-foundation">
+        <div class="node-pillar" style="--mb: 8vh; --del: 0s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 23vh; --del: -2s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 12vh; --del: -1s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 25vh; --del: -4s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 16vh; --del: -3s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 7vh; --del: -5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 22vh; --del: -2.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 10vh; --del: -6s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 4vh; --del: -1.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 20vh; --del: -4.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Duplicated array to stretch seamlessly across wider screens -->
+        <div class="node-pillar" style="--mb: 26vh; --del: -3.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 16vh; --del: -0.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 5vh; --del: -5.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 24vh; --del: -2s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 11vh; --del: -6.5s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="node-pillar" style="--mb: 18vh; --del: -1s;">
+            <div class="pillar-float">
+                <div class="pillar-inner">
+                    <div class="node solid"></div><div class="stem"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monochrome Theme Toggle -->
+    <button id="theme-toggle" class="interactive-element" aria-label="Toggle Theme" title="Toggle Theme (Press 't')">
+        <!-- Moon Icon -->
+        <svg id="moon-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <!-- Sun Icon -->
+        <svg id="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+
+    <!-- Loading Screen (Domino 'M' Animation) -->
+    <div id="loader">
+        <div class="domino-wrapper">
+            <div class="domino d1"></div>
+            <div class="domino d2"></div>
+            <div class="domino d3"></div>
+            <div class="domino d4"></div>
+        </div>
+    </div>
+
+    <!-- UI Elements -->
+    <div id="progress-bar"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="content-wrapper">
+        <header class="hero" id="home">
+            <div class="hero-container fade-in">
+                <div class="hero-text-wrapper">
+                    <h1>Max Joseph Holly</h1>
+                    <p class="subtitle" style="margin-top: 20px;">Civilisation Theory</p>
+                    
+                    <!-- Moved About Description Up -->
+                    <div id="about" class="about-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+
+            <!-- Writings Section -->
+            <section id="writings" class="section-container fade-in">
+                <h2>Writings</h2>
+                <p>Collections of writings and projects (56).</p>
+                
+                <div class="tabs-wrapper">
+                    <!-- Tab Navigation -->
+                    <div class="tabs-nav">
+                        <!-- Group 1 -->
+                        <button class="tab-btn active interactive-element" onclick="openTab(event, 'tab1')">
+                            <span class="tab-count">4</span> <span class="tab-title-text">New Notes on The Metacrisis</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab2')">
+                            <span class="tab-count">2</span> <span class="tab-title-text">Macrostrategy</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab3')">
+                            <span class="tab-count">3</span> <span class="tab-title-text">Generators</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab4')">
+                            <span class="tab-count">5</span> <span class="tab-title-text">New Mechanisms: Coordination Studies</span>
+                        </button>
+                        
+                        <div class="tab-break"></div>
+
+                        <!-- Group 2 -->
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab5')">
+                            <span class="tab-count">4</span> <span class="tab-title-text">Civilisational Mechanics</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab6')">
+                            <span class="tab-count">4</span> <span class="tab-title-text">Metatheory</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab7')">
+                            <span class="tab-count">20</span> <span class="tab-title-text">Fearful Symmetries</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab8')">
+                            <span class="tab-count">3</span> <span class="tab-title-text">Cybernetic Superintelligence</span>
+                        </button>
+                        
+                        <div class="tab-break"></div>
+
+                        <!-- Group 3 -->
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab9')">
+                            <span class="tab-count">5</span> <span class="tab-title-text">Critical Systems Existential Risk Studies</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab10')">
+                            <span class="tab-count">2</span> <span class="tab-title-text">Critical Effective Altruism</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab11')">
+                            <span class="tab-count">3</span> <span class="tab-title-text">Disputes of Progress</span>
+                        </button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab12')">
+                            <span class="tab-count">1</span> <span class="tab-title-text">Pragmatic Utopianism</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab 1 -->
+                    <div id="tab1" class="tab-content active" style="display: block;">
+                        <div class="tab-header">
+                            <h3>New Notes on The Metacrisis</h3>
+                            <p>recent writings moving the metacrisis discourse forward</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1YCAwMAnJDku3bKSVsPVxxW29SfZ0YTbIwpneE9ermwo/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Two Subcultures</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1Ry0KSyHZc6_RYnlkwb6U9P8z91cmk7J9-9LT76E6U7k/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Design of a (Post-)Transitional World-System: Uniting Schmachtenberger’s New Economics & Joseph Integral</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1wKSA9dWJL5Z3GuYuZjuY3WMpolLsCgYtUgyFcmVpnHg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Third Attractor: Decentralised Surveillance System Design</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1m5JwBJ5gkm1XqvuUsdYPvDxkQWB0ZAQUFiSfTymYcgE/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Civilisation is Solving Collective Action Problems</h3>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 2 -->
+                    <div id="tab2" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Macrostrategy</h3>
+                            <p>notes on fundamental factors for the future of civilisation</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/u/0/d/17lE5zu1AEPT-STuiQJv7ekbEqvbPyeo_yC2xFTLhW44/edit" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Post-Scarcity?: Conceptual Deconfusion</h3>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1fa2LWPzlc7FPEYyGEhSqt7iz77MTq-gKktny7S4DkhI/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Pro-human or Anti-AI?: Declaration on Digital Minds</h3>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 3 -->
+                    <div id="tab3" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Generators</h3>
+                            <p>identifying the fundamental causation of civilisation-scale catastrophes</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Solving the Generator Functions (of the Generator Functions) of Existential Risk</h3>
+                                    </a>
+                                </div>
+                                <p>Zero-sum games are multi-agent behaviours emergent from conditions of material scarcity and cultural divergence</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.w99kgcmb21v0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Solving the Generative Processes of Existential Risk: Military-Economic Adaptationism, Techno-Capital Acceleration & Cultural-Psychological Conditioning</h3>
+                                    </a>
+                                </div>
+                                <p>A macrohistorical ‘process philosophy’ of existential risk from universal darwinian selection and replicator misalignment</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.m9agpw68ne40" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Solving the Generative Coordination & Alignment Problems of AI X-Risk</h3>
+                                    </a>
+                                </div>
+                                <p>Good actors with failed coordination mechanisms. Bad actors with successful coordination mechanisms.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 4 -->
+                    <div id="tab4" class="tab-content">
+                        <div class="tab-header">
+                            <h3>New Mechanisms: Coordination Studies</h3>
+                            <p>For collectively steering the fourth industrial revolution towards a desirable post-AGI society</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1NFWfPT28JsH-Yl3B3Jt_ugzJugHYY_JYEZr6ONGee6o/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>We Need a New Theory of Coordination: An Introduction to Coordination (Studies) for the 21st Century</h3>
+                                    </a>
+                                </div>
+                                <p>Catalysing a second enlightenment to steer the fourth industrial revolution and the Age of AGI</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1CZBGup-MKHnMJW2A8lOj9LKgQtPXfbLUBmamKvlgrbk/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Towards UTOPIA: A Unified Theory of the Principles of Intelligence Alignment</h3>
+                                    </a>
+                                </div>
+                                <p>Advancing a new cybernetics for the holistic alignment, control and interpretability of the human and the machine</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1gxlWxFp0KfiR2oaWTwrxZFJE8nx79hXXGL-ylK1-93w/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Civilisation X: The Design of a Viable World-System</h3>
+                                    </a>
+                                </div>
+                                <p>Searching the design space of civilisations for a civilisation that can stand the test of time</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1Yxj0ClrdPOJHP-8MW-WW3uype7sTahwq5fnbC5wlFR8/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Mechanics of Meta-Utopia?: Civilisation Design for Desirable Multi-Cultural Equilibria</h3>
+                                    </a>
+                                </div>
+                                <p>Revisiting the libertarian political philosophy of Anarchy, State and Utopia in light of post-AGI cultural dynamics, defensive accelerationism and pluralistic alignment</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1kJkzTHJuoL8a2KNMQGUKXP9fuURypVMIosaveB_RdFg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Hayek’s Great Wall: Under Siege in the Age of AI?</h3>
+                                    </a>
+                                </div>
+                                <p>Markets, Superintelligence & the Economic Calculation Problem</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 5 -->
+                    <div id="tab5" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Civilisational Mechanics</h3>
+                            <p>Philosophical musings on the megamachine, the metacrisis and metamodern mythos</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘In order to reconquer the machine and subdue it to human purposes, one must first understand and assimilate it’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://sites.google.com/view/civilisationalmechanics/core/mechanics?authuser=0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>An Introduction to Civilisational Mechanics: A Grand Critical Systems Theory of the Metacrisis</h3>
+                                    </a>
+                                </div>
+                                <p>Advancing a holistic, historical and heterodox understanding of how civilisation functions and dysfunctions</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘Adam Smith needs to meet Complexity economics’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://sites.google.com/view/civilisationalmechanics/core/disorder?authuser=0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Spontaneous Disorder: The Destructive Powers of a Capitalist Civilisation</h3>
+                                    </a>
+                                </div>
+                                <p>Counter-balancing the order and progress narrative of liberal social theory</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘Led by an invisible hand to promote an end which was no part of his intention’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1OioopMNam1GwaKxw04Fcb-CAS4RDgVRHGJpjldDf37A/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Invisible Hands of the Market: Emergent (Mis)Alignments</h3>
+                                    </a>
+                                </div>
+                                <p>A short critique of Adam Smith’s ‘invisible hand’ metaphor in political economy, framed using AI alignment theory.</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘The true pilot must and will be the steerer whether other people like or not the possibility of this union of authority with the steerer’s art’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://sites.google.com/view/civilisationalmechanics/core/ship?authuser=0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Ship of Theseus of the State: A Philosophical Metaphor for the AI Transition</h3>
+                                    </a>
+                                </div>
+                                <p>Modernising a classical thought experiment for the integration of AI agents into sociotechnical systems</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 6 -->
+                    <div id="tab6" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Metatheory</h3>
+                            <p>on the metacrisis, metamodernism and metanarratives</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘The map is not the territory, but maps are all we possess’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1tiF_GoCGXu3FvKOqoT3-pGL9cYt0mZA2HfmBjEJ2Ymk/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>What Is The Metacrisis and What Should It Be?</h3>
+                                    </a>
+                                </div>
+                                <p>Using conceptual engineering to arrive at a clearer definition of the metacrisis</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘I had no need of that hypothesis’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1m_xW7T_NYB_BJEQQ9m00D3W2kg5m0DpqXEATxkZDSfg/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Maps & Mechanisms of the Metacrisis</h3>
+                                    </a>
+                                </div>
+                                <p>A sequence on metacrisis meta-theory (social ontology), conceptual analysis and the philosophy of causation</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘Our civilization is characterised by the word ‘progress’ - progress is its form rather than making progress one of its features’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1tBfTkNXSrhVo_lT2EfREY2bC-VWf_7rjETZ8_-9_dyI/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Metamodernism vs Neomodernism: Competition & Conflict between Cultural Paradigms</h3>
+                                    </a>
+                                </div>
+                                <p>A critical discourse on the prevailing progress narrative, the dialectic of enlightenment and the prospects for cultural evolution</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘The messiness of how a political apparatus is to be controlled and limited do not fit easily into one's hopes for a sleek, simple meta-utopian scheme’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1V_gwEAz4pzgwN6YZSAuEyJof_iA7z5WLmh6vFYJyCmw/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Dark Side of Meta-Utopia: Hierarchy, World-State & Dystopia</h3>
+                                    </a>
+                                </div>
+                                <p>The moral dangers of the many-worlds interpretation of the ideal civilisation design</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 7 (Fearful Symmetries with Subtabs) -->
+                    <div id="tab7" class="tab-content">
+                        <div class="tab-header">
+                            <p class="tab-quote"><em>‘What immortal hand or eye, Dare frame thy fearful symmetry?’</em></p>
+                            <div class="tab-header-title-row">
+                                <a href="https://docs.google.com/document/d/1udWwgdE6c7UM5MW5k2jCHMFp1QY4Ufw-XVdqbTw0fBY/edit?usp=sharing" target="_blank" class="tab-header-title-link interactive-element">
+                                    <h3>Fearful Symmetries</h3>
+                                </a>
+                                <a href="https://docs.google.com/document/d/1udWwgdE6c7UM5MW5k2jCHMFp1QY4Ufw-XVdqbTw0fBY/edit?usp=sharing" target="_blank" class="info-icon interactive-element" aria-label="More Info">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </a>
+                            </div>
+                            <p>on the parallels between capitalism, superintelligence, God and evolution</p>
+                        </div>
+
+                        <!-- Fearful Symmetries Sub-Navigation -->
+                        <div class="subtabs-nav">
+                            <button class="subtab-btn active interactive-element" onclick="openSubTab(event, 'subtab-core')">Core</button>
+                            <button class="subtab-btn interactive-element" onclick="openSubTab(event, 'subtab-capital-ai')">Capital-AI</button>
+                            <button class="subtab-btn interactive-element" onclick="openSubTab(event, 'subtab-evil')">Capitalist Problem of Evil</button>
+                            <button class="subtab-btn interactive-element" onclick="openSubTab(event, 'subtab-alien')">Critical Alien Phenomenology</button>
+                            <button class="subtab-btn interactive-element" onclick="openSubTab(event, 'subtab-paragons')">Paragons</button>
+                        </div>
+
+                        <!-- Subtab 1: Core -->
+                        <div id="subtab-core" class="subtab-content active" style="display: block;">
+                            <ul class="project-list">
+                                <li>
+                                    <p class="project-quote"><em>‘Any sufficiently complex and adaptive system is indistinguishable from intelligent agency’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://docs.google.com/document/d/1vgQ7Spju9YbNXACNIrzICYrWCX5KRLcYc83X3HO7RrE/preview" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Capital-AI: Capitalism as an Unaligned Artificial Superintelligence</h3>
+                                        </a>
+                                    </div>
+                                    <p>A Critical Theory-Fiction of Techno-Capital Acceleration, Super-states & Mega-Corporations</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘If ignorance of nature gave birth to gods, knowledge of nature is made for their destruction’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/capitalist-theodicy/evil" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Capitalist Problem of Evil: Capitalism as Religion & Capitalist Ideology as Secular Theodicy</h3>
+                                        </a>
+                                    </div>
+                                    <p>After the Death of God, the birth of Capital resurrected an identical structure of beliefs to justify the suffering in the world</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘Behind a veil, unseen yet present, I was the forceful soul that moved this mighty body’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://docs.google.com/document/d/10U0OvXVyr_qxpd-9jwLNIRH2ZFinu4I7kSb4fSo0je0/preview" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Capital Phenomenology: What Is It Like to Be Capitalism?</h3>
+                                        </a>
+                                    </div>
+                                    <p>The Market ‘Extended Order’ as a Distributed ‘Intelligent Designer’ & Emergent Agency with Multiple Subjects</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Subtab 2: Capital-AI -->
+                        <div id="subtab-capital-ai" class="subtab-content">
+                            <ul class="project-list">
+                                <li>
+                                    <p class="project-quote"><em>‘It is the machine which possesses skill and strength in place of the worker, is itself the virtuoso, with a soul of its own in the mechanical laws acting through it’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://docs.google.com/document/d/1J7qUhhfoeI1bWVFggzr_0wlQBCayjmbN6sGIV86Ecqg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Capitalism as an Inverse Mega-Mechanical Turk: A Machine Intelligence inside a Human Shell</h3>
+                                        </a>
+                                    </div>
+                                    <p>A speculative ‘alien phenomenology’ and ‘philosophy of mind’ of capitalism as a ‘ghost inside the machine’</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘Could we tell the difference between a world that is run by a superintelligent GDP maximizer and the world that we live in right now?’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://docs.google.com/document/d/1KlylnzbP9HZ8DpKxw51P1h3EzuV54VsSN7MA2DUJV-I/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Capital, Computing Megamachinery & Superintelligence: Can Market Megamachines Think?</h3>
+                                        </a>
+                                    </div>
+                                    <p>A civilisation-scale reverse Turing Test between global capitalism and unaligned ASI</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Subtab 3: Problem of Evil -->
+                        <div id="subtab-evil" class="subtab-content">
+                            <ul class="project-list">
+                                <li>
+                                    <p class="project-quote"><em>‘“Economy” melted the matter of this & every other world to fit its presuppositions - the greatest theocratic achievement in a history that was never human’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/capitalist-theodicy/realism?authuser=0" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Best of All Possible World-Systems Theodicy: Capitalist Realism & The End of History</h3>
+                                        </a>
+                                    </div>
+                                    <p>On the symmetry between Leibniz’s ‘best of all possible worlds’ theodicy and Fukuyama’s ‘end of history’ thesis</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘Man will never be able to know what money is any more than he will be able to know what God is’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/capitalist-theodicy/evolutionary?authuser=0" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Evolutionary Theodicy: Extended Order, Economic Calculation & Epistemic Distance</h3>
+                                        </a>
+                                    </div>
+                                    <p>On the market mysticism of the Hayekian philosophy of economics</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Subtab 4: Alien Phenomenology -->
+                        <div id="subtab-alien" class="subtab-content">
+                            <ul class="project-list">
+                                <li>
+                                    <p class="project-quote"><em>‘An evil demon, not less powerful than deceitful, has employed his whole energies in deceiving me’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/d/1g12Ks6rrfDZRklv6sXQuZ-zyW7h5qmJ4/p/1QwwtcyXQyze5M0aDSTusWUZhS037L2oX/edit" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Demons of Surveillance Capitalism: Descartes & Laplace’s Demons as Technological Prophecy</h3>
+                                        </a>
+                                    </div>
+                                    <p>After millennia of thought, it is not the philosopher kings of the enlightenment who will end the debate over free will, but the tech lords of the information age</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘The only tyrant I accept in this world is the ‘still small voice’ within me’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/benevolent" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Benevolent Dictator: Rousseau & Bentham on Morality & ‘Its’ Demands</h3>
+                                        </a>
+                                    </div>
+                                    <p>Living the Good Life as the Conscious Means to the Kingdom of Ends</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘For we wrestle not against flesh and blood, but against principalities, against powers, against the rulers of the darkness of this world’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/alienation" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Against Agents & Alienation</h3>
+                                        </a>
+                                    </div>
+                                    <p>A critique of the projectionist social metaphysics of hyper-agential hyper-realism</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘We are made to live together because of the interrelated structure of reality’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/life-world-system" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Life-World-System: On the Universal Binding of Subjects & Structures</h3>
+                                        </a>
+                                    </div>
+                                    <p>A response to the question: what do you find beautiful?</p>
+                                </li>
+                                <li>
+                                    <p class="project-quote"><em>‘If I find in myself a desire which no experience in this world can satisfy, the most probable explanation is that I was made for another world’</em></p>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://docs.google.com/document/d/1YUDAKsDlCP-byuOWPGlB1ClMBzMoGS2VCgyQR3Uz8Is/edit?rm=minimal" target="_blank" class="project-link-title interactive-element">
+                                            <h3>The Argument from Post-Capitalist Desire: Another World is Possible</h3>
+                                        </a>
+                                    </div>
+                                    <p>Framing the fearful symmetry between C.S Lewis’s philosophy of religion & Mark Fisher’s philosophy of capitalism</p>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Subtab 5: Paragons -->
+                        <div id="subtab-paragons" class="subtab-content">
+                            <ul class="project-list">
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/phenomenology" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Foucault on Panopticism</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/machine" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Marx & Voltaire on Machine Gods</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/speechmaker" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Buber on the Tyranny of the Market</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/abyss" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Nietzsche on Gazing into The Abyss</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/moloch" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Ginsberg’s Moloch</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/angel" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Benjamin’s Angel of History</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/master" target="_blank" class="project-link-title interactive-element">
+                                            <h3>McGilchrist’s Master & His Emissary</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project-title-wrapper">
+                                        <a href="https://sites.google.com/view/civilisationalmechanics/critical-alien-phenomenology/oil" target="_blank" class="project-link-title interactive-element">
+                                            <h3>Negarestani’s Oil as Entity</h3>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Tab 8 -->
+                    <div id="tab8" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Cybernetic Superintelligence</h3>
+                            <p>on modelling the world-system itself a form of misaligned human-machine ASI</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘We are called to be architects of the future, not its victims’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1TsNWKmNGK288ssGVnySKEzzoYqFpnYJ1gVK03ybx7Tw/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Introducing the Human Collective Intelligence (HCI) Alignment Problem</h3>
+                                    </a>
+                                </div>
+                                <p>A collective problem we can collectively solve</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/presentation/d/1-mb_5WrG8X8lMOTxDeOxtZOCHyVkeWT49bUech4JXxs/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The ‘World-System-AI’ Cybernetic Intelligence Alignment Problem</h3>
+                                    </a>
+                                </div>
+                                <p>A Critical Systems Theory of Catastrophic Risk from Misaligned Human, Artificial & Collective Intelligence</p>
+                            </li>
+                            <li>
+                                <div class="project-title-wrapper">
+                                    <a href="https://youtu.be/JMOJAOsnUQY?si=0AN5uA6S5TyauVus" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Civilisational Superintelligence Alignment (PIBBSS Talk)</h3>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 9 -->
+                    <div id="tab9" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Critical Systems Existential Risk Studies</h3>
+                            <p>A heterodox alternative uniting critical theory and systems theory to identify the generative mechanisms of existential risk</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘Working in ERS–working to avoid human extinction–does not mean uncritically holding up the status quo as the ideal or even as acceptable’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/15sDGsw6FLgL-JDksovOWZI_MFLvlb3Bv9BloUIODNtA/edit?rm=minimal" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Seven Concepts for a Critical Systems Existential Risk Studies (CS/ER)</h3>
+                                    </a>
+                                </div>
+                                <p>A heterodox alternative uniting critical theory and systems theory to identify the generative mechanisms of existential risk</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘Ideology is strong exactly because it is no longer experienced as ideology’ (Zizek)</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1GpuOxRRFZjrRiPS03UfHRv02VwNhPd4fT1PD1BRolWI/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The End of History?: The Missing (Critical) Theory of Power in AI Macrostrategy Research</h3>
+                                    </a>
+                                </div>
+                                <p>Without incorporating critical thought, Forethought will reproduce the problem of power it seeks to solve</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘The fresh design of a meta-system, exerting meta-controls, is the only solution to our problems’ (Beer)</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1uM7MUqZs7sMxqjk_o0uscOKirvOCGMKMkeuxRxgylJg/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Void of Viatopia: The Missing (Post-Capitalist) Political Vision in AI Macrostrategy Research</h3>
+                                    </a>
+                                </div>
+                                <p>Absent an actual plan for the form post-AGI society will take, Forethought will only produce vague philosophical notions, system-blind in their effect</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘The ideology that that we tend to perceive as non-ideological is precisely where we should be most alert to the functioning of ideology’ (Fisher)</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1yxtjCXXRHuLdNovXeq2WsHJvf4D_nAqTQjL5O5hGuVw/preview?tab=t.0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Spectre of the Status Quo: The Missing (Hegemonic) Ideologies in S-Risk Studies</h3>
+                                    </a>
+                                </div>
+                                <p>Long-Term Risk from Post-Ideological Hyper-Normalisation</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘If we remain a society polarized between a privileged elite and a downtrodden mass, then the most plausible trajectory leads to something much darker’ (Frase)</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1A3Nk1Z2_ED9pDkrVuOGaLJ1fDKAo1dOtBZOCdRdHVvU/edit?rm=minimal" target="_blank" class="project-link-title interactive-element">
+                                        <h3>The Player of Games: AGI as the Victory Condition of Class Warfare & Exterminism as the Elite End-Game of Capitalism</h3>
+                                    </a>
+                                </div>
+                                <p>From permanent underclass to neomalthusian classicide, the default future of AI-capitalism does not look good for the 99%</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 10 -->
+                    <div id="tab10" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Critical Effective Altruism</h3>
+                            <p>A sequence of writings that critique the actually-existing EA movement for its dominant ideological alignment with global techno-capitalism</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘There must be many social systems that would work far better than any now in existence. In the scientific tradition, our task is to find them.’ (Kuhn)</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1D5jfiz22SbA-6Wf146gaGOdou5HjKQTCzPROqfjptQ8/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Who Speaks for Earth?: Ord & Sagan on Existential Risk & The End of History?</h3>
+                                    </a>
+                                </div>
+                                <p>‘The Power of Gods without the Wisdom of Gods’ as Capitalist Civilisational Unalignment</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘If you are temporarily ignorant about a phenomenon, that is a fact about your current state of mind, not a fact about the phenomenon. A blank map does not correspond to a blank territory’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1eY8ZL3h4xoA9leikFTfhjJb4jth3yzUwXavenGN-8vQ/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Is There No Alternative?: Singer’s World-Systems Change Cruxes & The Capitalist Realism of Effective Altruism</h3>
+                                    </a>
+                                </div>
+                                <p>Actually-existing reformist EA hinges on two dubious dominant ideological assumptions about the morality and immutability of capitalism</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Tab 11 -->
+                    <div id="tab11" class="tab-content">
+                        <div class="tab-header">
+                            <p class="tab-quote"><em>‘Progress - the theory that you can get something for nothing’</em></p>
+                            <h3>Disputes of Progress</h3>
+                            <p>is a critical response to the actually-existing progress movement (Roots of Progress) for its ideological alignment with actually-existing techno-capitalism.</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘Our present over-commitment to technics is in part due to a radical misinterpretation of the whole course of human development’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/168BTaYT0-U96ceO98agZcP9DipHf5pXPG4fzvAtKDmI/preview?tab=t.o5ire8h5btff" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Introducing Disputes of Progress: A Critical Response to the Roots of Progress</h3>
+                                    </a>
+                                </div>
+                                <p>Naive progress accelerationism and techno-capitalist optimism is on the rise. We need a more nuanced macrohistory of civilisation and a more omni-considerate macrostrategy for its future.</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘The professional thinkers who sprang from these classes should have based upon the facts of technological and economic progress a general theory of human life’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1y4eUZRA5FXPZcqVHaZEDc6lixlJbGrhG89bGuhR56z8/preview?tab=t.0" target="_blank" class="project-link-title interactive-element">
+                                        <h3>We Need a New Critical Philosophy of Progress for the 21st Century</h3>
+                                    </a>
+                                </div>
+                                <p>The 19th century believed in post-capitalist progress; the 20th century became sceptical. We need a new way forward: ‘A Post-capitalism for the 21st Century’</p>
+                            </li>
+                            <li>
+                                <p class="project-quote"><em>‘Whatever does not enter into identity, whatever eludes rational planning in the realm of means, turns into frightening retribution’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1-nYNCssSc77seqzji9CiBO7jUV9VPRqCYcdoosJBqDI/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Problem-Solution-Externality History</h3>
+                                    </a>
+                                </div>
+                                <p>Without factoring in externalities, narrow technological fixes can simply substitute one set of problems for another down the line</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 12 -->
+                    <div id="tab12" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Pragmatic Utopianism</h3>
+                            <p>an extended and alternative conception of Effective Altruism holistically oriented towards civilisation analysis, design and transition</p>
+                        </div>
+                        <ul class="project-list">
+                            <li>
+                                <p class="project-quote"><em>‘The assumption that what currently exists must necessarily exist is the acid that corrodes all visionary thinking.’</em></p>
+                                <div class="project-title-wrapper">
+                                    <a href="https://docs.google.com/document/d/1p96cg9Fa-3OIGMj4S_WGlZ7iqO4Vswvjm9jVsZiwH2c/preview" target="_blank" class="project-link-title interactive-element">
+                                        <h3>Pragmatic Utopianism: Doing Systems & Society Better</h3>
+                                    </a>
+                                </div>
+                                <p>Principles of a progressive beneficentrist movement towards a post-capitalism and post-communism for the 21st century</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- Projects Section -->
+            <section id="projects" class="section-container fade-in">
+                <h2>Projects</h2>
+                <ul class="project-list">
+                    <li>
+                        <p class="project-quote"><em>Glossary/Wiki</em></p>
+                        <div class="project-title-wrapper">
+                            <a href="https://maxramsahoye.github.io/civilisationtheory" target="_blank" class="project-link-title interactive-element">
+                                <h3>&mdash; Civilisation Theory</h3>
+                            </a>
+                        </div>
+                        <p>A conceptual adaptive system</p>
+                    </li>
+                    <li>
+                        <p class="project-quote"><em>Course</em></p>
+                        <div class="project-title-wrapper">
+                            <a href="https://docs.google.com/document/d/1tfhKQxr0g3SqPQcEINfQW--HZK9F5_2XIJvDvLOAuMU/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                <h3>&mdash; Coordination (Studies) Fundamentals</h3>
+                            </a>
+                        </div>
+                        <p>introducing researchers in AI strategy to a new field targeted towards solving coordination problems and designing new coordination mechanisms</p>
+                    </li>
+                    <li>
+                        <p class="project-quote"><em>Literature Map</em></p>
+                        <div class="project-title-wrapper">
+                            <a href="https://cybersynergetic.com" target="_blank" class="project-link-title interactive-element">
+                                <h3>&mdash; Cybersynergetic</h3>
+                            </a>
+                        </div>
+                        <p>A literature map of the civilisational superintelligence alignment problem</p>
+                    </li>
+                    <li>
+                        <p class="project-quote"><em>Timeline</em></p>
+                        <div class="project-title-wrapper">
+                            <a href="https://molochian.agency" target="_blank" class="project-link-title interactive-element">
+                                <h3>&mdash; Molochian</h3>
+                            </a>
+                        </div>
+                        <p>The (in)human history of a memetic entity</p>
+                    </li>
+                    <li>
+                        <p class="project-quote"><em>Reading List</em></p>
+                        <div class="project-title-wrapper">
+                            <a href="https://docs.google.com/document/d/1Qj85wI0mtgWq4Mv5NA8lbBILMn8iQIbHrYHuFIK4xpw/edit?usp=sharing" target="_blank" class="project-link-title interactive-element">
+                                <h3>&mdash; Redteaming Effective Altruism Fellowship</h3>
+                            </a>
+                        </div>
+                        <p>on the epistemics, redteaming and criticism (R&C) of actually-existing EA</p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="section-container fade-in">
+                <h2>Reach Out</h2>
+                <p>If you'd like to collaborate or share any thoughts</p>
+                
+                <div class="contact-email-container">
+                    <a href="mailto:maxjosephholly@outlook.com" class="email-link interactive-element">maxjosephholly@outlook.com</a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p class="fade-in">&copy; 2026 Max Joseph Holly</p>
+        </footer>
+    </div>
+
+    <!-- Back to top arrow -->
+    <a href="#home" id="back-to-top" class="interactive-element">&uarr;</a>
+
+    <!-- UI Interactions Script -->
+    <script>
+        // --- Web Audio API Integration ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+        document.body.addEventListener('click', initAudio, { once: true });
+        document.body.addEventListener('keydown', initAudio, { once: true });
+
+        function playHoverSound() {
+            if (!audioCtx || audioCtx.state === 'suspended') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playClickSound() {
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15);
+            
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playThemeSound(isDark) {
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            if (isDark) {
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
+            } else {
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.3);
+            }
+            
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // --- Loader Logic ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                document.body.classList.remove('loading');
+                setTimeout(() => loader.remove(), 800);
+            }, 2000); 
+        });
+
+        // --- Custom Cursor Logic (GPU Accelerated Tracking) ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const interactives = document.querySelectorAll('.interactive-element, a, button, .node-pillar, .astrolabe');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            // Sub-pixel hardware rendering completely prevents circle deformation while moving
+            cursorDot.style.transform = `translate3d(${posX}px, ${posY}px, 0) translate(-50%, -50%)`;
+            cursorOutline.animate({
+                transform: `translate3d(${posX}px, ${posY}px, 0) translate(-50%, -50%)`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Add hover and click sounds to interactives
+        interactives.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                document.body.classList.add('cursor-hover');
+                playHoverSound();
+            });
+            el.addEventListener('mouseleave', () => {
+                document.body.classList.remove('cursor-hover');
+            });
+            el.addEventListener('click', (e) => {
+                // Ensure theme button handles its own sound
+                if(!e.target.closest('#theme-toggle') && !e.target.classList.contains('tab-btn') && !e.target.classList.contains('subtab-btn')) {
+                    playClickSound();
+                }
+            });
+        });
+
+        // --- Prevent Node Reload & Change Playback Rate Smoothly via JS ---
+        // Grab top-nav astrolabe
+        const mainAstrolabe = document.querySelector('.astrolabe');
+        if (mainAstrolabe) {
+            const container = mainAstrolabe.querySelector('.geo-node-container');
+            mainAstrolabe.addEventListener('mouseenter', () => {
+                // Accelerate 2x base speed
+                if(container) container.getAnimations().forEach(anim => anim.playbackRate = 2);
+            });
+            mainAstrolabe.addEventListener('mouseleave', () => {
+                // Reset
+                if(container) container.getAnimations().forEach(anim => anim.playbackRate = 1);
+            });
+        }
+
+        // --- Tab Logic ---
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].style.display = "none";
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).style.display = "block";
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            playClickSound();
+        }
+
+        // --- SubTab Logic ---
+        function openSubTab(evt, tabId) {
+            // Scope subtabs to only affect those inside Fearful Symmetries
+            const subtabContents = document.getElementsByClassName("subtab-content");
+            for (let i = 0; i < subtabContents.length; i++) {
+                subtabContents[i].style.display = "none";
+                subtabContents[i].classList.remove("active");
+            }
+
+            const subtabBtns = document.getElementsByClassName("subtab-btn");
+            for (let i = 0; i < subtabBtns.length; i++) {
+                subtabBtns[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).style.display = "block";
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            playClickSound();
+        }
+
+        // --- Theme Toggle Logic (Including Favicon Update) ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+        const favicon = document.getElementById('favicon');
+        let isDarkMode = false;
+        
+        // Define light and dark favicon SVGs
+        const faviconLight = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>';
+        const faviconDark = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>';
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-theme', isDarkMode);
+            
+            // Toggle SVG visibility
+            moonIcon.style.display = isDarkMode ? 'none' : 'block';
+            sunIcon.style.display = isDarkMode ? 'block' : 'none';
+            
+            // Toggle Favicon
+            favicon.href = isDarkMode ? faviconDark : faviconLight;
+            
+            playThemeSound(isDarkMode);
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 't') {
+                toggleTheme();
+            }
+        });
+
+        // --- Scroll Progress Bar & Back-to-Top Button Logic ---
+        const progressBar = document.getElementById('progress-bar');
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = scrollPercent + '%';
+
+            if (scrollTop > 200) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        // --- Fade-in on Scroll Logic ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+        
+        // Initial check for elements in view on load
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach(element => {
+                const rect = element.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    element.classList.add('visible');
+                }
+            });
+        }, 100);
+    </script>
+</body>
+</html>
