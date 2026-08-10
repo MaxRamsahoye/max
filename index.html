@@ -113,7 +113,7 @@
         .nav-links { position: absolute; top: 25px; left: 25px; display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 30px; z-index: 1000; pointer-events: auto; }
         .nav-links a { text-decoration: none; color: var(--text-main); font-size: 1.15rem; font-weight: 600; padding-bottom: 2px; position: relative; transition: color 0.2s ease; }
         .nav-links a::after { content: ''; position: absolute; width: 0; height: 1.5px; bottom: 0; left: 0; background-color: var(--accent-color); transition: width 0.2s ease, background-color 0.4s ease; }
-        .nav-links a:hover { color: var(--accent-color); }
+        .nav-links a:hover { color: var(--text-main); }
         .nav-links a:hover::after { width: 100%; }
 
         @media (max-width: 800px) { .nav-links { left: 50%; transform: translateX(-50%); gap: 20px; } }
@@ -266,7 +266,7 @@
             <button id="btn-light" class="theme-btn interactive-element" aria-label="Light Sepia Theme" title="Light Sepia Theme"></button>
             <button id="btn-pure-white" class="theme-btn interactive-element" aria-label="Pure White Theme" title="Pure White Theme"></button>
             <button id="btn-pure-black" class="theme-btn interactive-element" aria-label="Pure Black Theme" title="Pure Black Theme"></button>
-        </div>
+            </div>
         <div class="theme-info-container interactive-element">
             <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -332,12 +332,12 @@
         <main>
             <section id="writings" class="section-container fade-in">
                 <h2>Writings</h2>
-                <p class="section-sub">Collections of writings and projects (58).</p>
+                <p class="section-sub">Collections of writings and projects (60).</p>
                 <div class="tabs-wrapper">
                     <div class="tabs-nav">
-                        <button class="tab-btn active interactive-element" onclick="openTab(event, 'tab1')"><span class="tab-count">6</span> <span class="tab-title-text">New Notes on The Metacrisis</span></button>
+                        <button class="tab-btn active interactive-element" onclick="openTab(event, 'tab1')"><span class="tab-count">7</span> <span class="tab-title-text">New Notes on The Metacrisis</span></button>
                         <button class="tab-btn interactive-element" onclick="openTab(event, 'tab2')"><span class="tab-count">2</span> <span class="tab-title-text">Macrostrategy</span></button>
-                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab3')"><span class="tab-count">3</span> <span class="tab-title-text">Generators</span></button>
+                        <button class="tab-btn interactive-element" onclick="openTab(event, 'tab3')"><span class="tab-count">4</span> <span class="tab-title-text">Generators</span></button>
                         <button class="tab-btn interactive-element" onclick="openTab(event, 'tab4')"><span class="tab-count">5</span> <span class="tab-title-text">New Mechanisms: Coordination Studies</span></button>
                         <div class="tab-break"></div>
                         <button class="tab-btn interactive-element" onclick="openTab(event, 'tab5')"><span class="tab-count">4</span> <span class="tab-title-text">Civilisational Mechanics</span></button>
@@ -358,9 +358,10 @@
                         </div>
                         <ul class="project-list">
                             <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1YCAwMAnJDku3bKSVsPVxxW29SfZ0YTbIwpneE9ermwo/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>The Two Subcultures</h3></a></div></li>
-                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1Ry0KSyHZc6_RYnlkwb6U9P8z91cmk7J9-9LT76E6U7k/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>The Design of a (Post-)Transitional World-System: Uniting Schmachtenberger’s New Economics & Joseph Integral</h3></a></div></li>
-                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/195dk5Z46djkOYEBG1fadCBsR8phg_rECRBVTvUxp9B0/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Infrastructural Gainism & Decentralised Civilisation Design: From Fresco’s City-Systems to Hall’s Civium</h3></a></div></li>
+                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1Ry0KSyHZc6_RYnlkwb6U9P8z91cmk7J9-9LT76E6U7k/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>The Design of a (Post-)Transitional World-System: Uniting Schmachtenberger’s <em>New Economics</em> & Joseph <em>Integral</em></h3></a></div></li>
+                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/195dk5Z46djkOYEBG1fadCBsR8phg_rECRBVTvUxp9B0/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Infrastructural Gainism & Decentralised Civilisation Design: From Fresco’s <em>City-Systems</em> to Hall’s <em>Civium</em></h3></a></div></li>
                             <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1wKSA9dWJL5Z3GuYuZjuY3WMpolLsCgYtUgyFcmVpnHg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Still <em>In Search of the Third Attractor?</em></h3></a></div></li>
+                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1rEHgadR4Uv7S-JCZFrnSj-duzvZVcxldXOHjh0yFkYk/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Deconfusing & Decomposing the Generative Dynamics of Existential Risk</h3></a></div></li>
                             <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1m5JwBJ5gkm1XqvuUsdYPvDxkQWB0ZAQUFiSfTymYcgE/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Civilisation is the Solving of Collective Action Problems</h3></a></div></li>
                             <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1h5KBmUvdxCKpiXg3haWZM7XuegsW1BZNRodUkKm6Mwg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>The Sensemaking Crises: Darwinian, Cartesian, Nietzschean</h3></a></div></li>
                             <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1h5KBmUvdxCKpiXg3haWZM7XuegsW1BZNRodUkKm6Mwg/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>The Wisdom Gaps: Moral, Structural, Epistemic</h3></a></div></li>
@@ -386,6 +387,7 @@
                         <ul class="project-list">
                             <li><div class="badges-container"><span class="badge">AI-Assisted</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?usp=sharing" target="_blank" class="project-link-title interactive-element"><h3>Solving the Generator Functions (of the Generator Functions) of Existential Risk</h3></a></div><p>Zero-sum games are multi-agent behaviours emergent from conditions of material scarcity and cultural divergence</p></li>
                             <li><div class="badges-container"><span class="badge">AI-Assisted</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.w99kgcmb21v0" target="_blank" class="project-link-title interactive-element"><h3>Solving the Generative Processes of Existential Risk: Military-Economic Adaptationism, Techno-Capital Acceleration & Cultural-Psychological Conditioning</h3></a></div><p>A macrohistorical ‘process philosophy’ of existential risk from universal darwinian selection and replicator misalignment</p></li>
+                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.yxk21nhu7666" target="_blank" class="project-link-title interactive-element"><h3>Solving the Generative Subsystems of Existential Risk: Structural, Superstructural, Infrastructural, Game-Theoretic</h3></a></div><p>X-risk is the emergent product of multiple civilisational subsystems interacting; most theories anchor on just one</p></li>
                             <li><div class="badges-container"><span class="badge">AI-Assisted</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1HnOAR2OLPTQvS-yzs_NwRADMirkyTA1j2FvmZwNiN5w/edit?tab=t.m9agpw68ne40" target="_blank" class="project-link-title interactive-element"><h3>Solving the Generative Coordination & Alignment Problems of AI X-Risk</h3></a></div><p>Good actors with failed coordination mechanisms. Bad actors with successful coordination mechanisms.</p></li>
                         </ul>
                     </div>
