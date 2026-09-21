@@ -102,12 +102,23 @@
 
         /* Section Divider (matches the description column width, with a hoverable geo-node) */
         .section-divider { width: 750px; max-width: 100%; margin: 0 auto 30px; pointer-events: none; }
-        .section-divider-hitbox { position: relative; width: 100%; height: 30px; display: flex; align-items: center; pointer-events: auto; cursor: pointer; }
-        .section-divider-line { width: 100%; height: 20px; overflow: visible; display: block; }
+        .section-divider-hitbox { position: relative; width: 100%; height: 28px; display: flex; align-items: flex-end; pointer-events: auto; cursor: pointer; }
+        .section-divider-line { width: 100%; height: 28px; overflow: visible; display: block; }
         .section-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
-        .section-divider-hitbox .geo-node { top: 50%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) ease-in-out infinite alternate; will-change: transform; }
+        .section-divider-hitbox .geo-node { top: 100%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) ease-in-out infinite alternate; will-change: transform; }
 
-        @keyframes slideDot { from { left: 1.6%; } to { left: 98.4%; } }
+        @keyframes slideDot {
+            0%   { left: 1.867%;  transform: translateY(-28px); }
+            2%   { left: 0.547%;  transform: translateY(-23.9px); }
+            4%   { left: 0%;      transform: translateY(-14px); }
+            6%   { left: 0.547%;  transform: translateY(-4.1px); }
+            8%   { left: 1.867%;  transform: translateY(0); }
+            92%  { left: 98.133%; transform: translateY(0); }
+            94%  { left: 99.453%; transform: translateY(-4.1px); }
+            96%  { left: 100%;    transform: translateY(-14px); }
+            98%  { left: 99.453%; transform: translateY(-23.9px); }
+            100% { left: 98.133%; transform: translateY(-28px); }
+        }
 
         #geo-foundation { position: absolute; bottom: 0; left: 0; right: 0; height: 30vh; display: flex; align-items: stretch; justify-content: space-evenly; padding: 0 1vw; z-index: 0; pointer-events: none; overflow: hidden; }
         .node-pillar { position: relative; width: 41px; flex-shrink: 0; height: 100%; pointer-events: auto; cursor: pointer; background-color: var(--hitbox-bg); }
@@ -361,7 +372,7 @@
 
         <div class="section-divider" aria-hidden="true">
             <div class="section-divider-hitbox interactive-element">
-                <svg class="section-divider-line" viewBox="0 0 750 20" preserveAspectRatio="none"><path d="M12,0 A5,5 0 0,0 12,10 L738,10 A5,5 0 0,0 738,0"></path></svg>
+                <svg class="section-divider-line" viewBox="0 0 750 28" preserveAspectRatio="none"><path d="M14,0 A14,14 0 0,0 14,28 L736,28 A14,14 0 0,0 736,0"></path></svg>
                 <div class="geo-node"></div>
             </div>
         </div>
