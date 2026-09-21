@@ -107,6 +107,7 @@
         .section-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
         .section-divider-hitbox .geo-node { top: 0; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) linear infinite alternate; will-change: transform; }
         .section-divider--flip .section-divider-hitbox { transform: scaleY(-1); }
+        .section-divider--flip .section-divider-hitbox .geo-node { animation-direction: alternate-reverse; }
 
         @keyframes slideDot {
             0%      { left: 0.173%;  transform: translateY(22px); }
