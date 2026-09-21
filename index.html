@@ -100,26 +100,26 @@
         
         @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* Section Divider (matches the description column width, with a hoverable geo-node) */
-        .section-divider { width: 750px; max-width: 100%; margin: 0 auto 30px; pointer-events: none; }
-        .section-divider-hitbox { position: relative; width: 100%; height: 20px; display: flex; align-items: flex-end; pointer-events: auto; cursor: pointer; }
-        .section-divider-line { width: 100%; height: 20px; overflow: visible; display: block; }
+        /* Section Divider (matches the Artifacts section width, curves facing down) */
+        .section-divider { width: 1155px; max-width: 100%; margin: 0 auto 30px; pointer-events: none; }
+        .section-divider-hitbox { position: relative; width: 100%; height: 22px; display: flex; align-items: flex-start; pointer-events: auto; cursor: pointer; }
+        .section-divider-line { width: 100%; height: 22px; overflow: visible; display: block; }
         .section-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
-        .section-divider-hitbox .geo-node { top: 100%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) linear infinite alternate; will-change: transform; }
+        .section-divider-hitbox .geo-node { top: 0; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) linear infinite alternate; will-change: transform; }
 
         @keyframes slideDot {
-            0%      { left: 0.267%;  transform: translateY(-20px); }
-            1.031%  { left: 0.267%;  transform: translateY(-12px); }
-            1.639%  { left: 0.388%;  transform: translateY(-7.408px); }
-            2.246%  { left: 0.735%;  transform: translateY(-3.515px); }
-            2.854%  { left: 1.254%;  transform: translateY(-0.913px); }
-            3.461%  { left: 1.867%;  transform: translateY(0); }
-            96.539% { left: 98.133%; transform: translateY(0); }
-            97.146% { left: 98.746%; transform: translateY(-0.913px); }
-            97.754% { left: 99.265%; transform: translateY(-3.515px); }
-            98.361% { left: 99.612%; transform: translateY(-7.408px); }
-            98.969% { left: 99.733%; transform: translateY(-12px); }
-            100%    { left: 99.733%; transform: translateY(-20px); }
+            0%      { left: 0.173%;  transform: translateY(22px); }
+            0.844%  { left: 0.173%;  transform: translateY(12px); }
+            1.242%  { left: 0.252%;  transform: translateY(7.408px); }
+            1.640%  { left: 0.477%;  transform: translateY(3.515px); }
+            2.037%  { left: 0.815%;  transform: translateY(0.913px); }
+            2.435%  { left: 1.212%;  transform: translateY(0); }
+            97.565% { left: 98.788%; transform: translateY(0); }
+            97.963% { left: 99.185%; transform: translateY(0.913px); }
+            98.360% { left: 99.522%; transform: translateY(3.515px); }
+            98.758% { left: 99.748%; transform: translateY(7.408px); }
+            99.156% { left: 99.827%; transform: translateY(12px); }
+            100%    { left: 99.827%; transform: translateY(22px); }
         }
 
         #geo-foundation { position: absolute; bottom: 0; left: 0; right: 0; height: 30vh; display: flex; align-items: stretch; justify-content: space-evenly; padding: 0 1vw; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -374,7 +374,7 @@
 
         <div class="section-divider" aria-hidden="true">
             <div class="section-divider-hitbox interactive-element">
-                <svg class="section-divider-line" viewBox="0 0 750 20" preserveAspectRatio="none"><path d="M2,0 L2,8 A12,12 0 0,0 14,20 L736,20 A12,12 0 0,0 748,8 L748,0"></path></svg>
+                <svg class="section-divider-line" viewBox="0 0 1155 22" preserveAspectRatio="none"><path d="M2,22 L2,12 A12,12 0 0,1 14,0 L1141,0 A12,12 0 0,1 1153,12 L1153,22"></path></svg>
                 <div class="geo-node"></div>
             </div>
         </div>
