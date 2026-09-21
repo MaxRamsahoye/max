@@ -124,12 +124,14 @@
             100%    { left: 99.827%; transform: translateY(22px); }
         }
 
-        /* Vertical Tabs-Nav Divider (same motion-dot line, rotated) */
+        /* Vertical Tabs-Nav Divider (same motion-dot line, rotated, straight) */
         .tabs-nav-divider { position: absolute; top: 0; right: -1px; width: 22px; height: 100%; pointer-events: none; }
         .tabs-nav-divider-hitbox { position: relative; width: 22px; height: 100%; pointer-events: auto; cursor: pointer; }
         .tabs-nav-divider-line { width: 22px; height: 100%; overflow: visible; display: block; }
         .tabs-nav-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
-        .tabs-nav-divider-hitbox .geo-node { top: 0; left: 0; margin-top: -4px; margin-left: -4px; will-change: transform; }
+        .tabs-nav-divider-hitbox .geo-node { top: 0%; left: 0; margin-top: -4px; margin-left: -4px; animation: slideDotVertical var(--top-speed) linear infinite alternate; will-change: transform; }
+
+        @keyframes slideDotVertical { from { top: 0%; } to { top: 100%; } }
 
         @media (max-width: 1000px) {
             .tabs-nav-divider { display: none; }
@@ -419,7 +421,7 @@
                     <div class="tabs-nav">
                         <div class="tabs-nav-divider" aria-hidden="true">
                             <div class="tabs-nav-divider-hitbox interactive-element">
-                                <svg class="tabs-nav-divider-line" viewBox="0 0 22 400" preserveAspectRatio="none"><path d="M22,2 L12,2 A12,12 0 0,0 0,14 L0,386 A12,12 0 0,0 12,398 L22,398"></path></svg>
+                                <svg class="tabs-nav-divider-line" viewBox="0 0 22 100" preserveAspectRatio="none"><path d="M0,0 L0,100"></path></svg>
                                 <div class="geo-node"></div>
                             </div>
                         </div>
@@ -946,88 +948,18 @@
             evt.currentTarget.classList.add("active");
 
             playClickSound();
-            updateTabsNavDivider();
         }
 
         // --- Vertical Tabs-Nav Divider (same motion-dot line as the section dividers, rotated) ---
-        let tabsNavDividerAnim = null;
-
-        function updateTabsNavDivider() {
-            const nav = document.querySelector('.tabs-nav');
-            const wrapper = document.querySelector('.tabs-nav-divider');
-            if (!nav || !wrapper) return;
-            const svg = wrapper.querySelector('svg');
-            const path = wrapper.querySelector('path');
-            const dot = wrapper.querySelector('.geo-node');
-
-            const H = nav.getBoundingClientRect().height;
-            if (H < 40) return;
-
-            const r = 12, s = 10;
-            const topCenter = { x: 12, y: 14 };
-            const bottomCenter = { x: 12, y: H - 14 };
-
-            svg.setAttribute('viewBox', `0 0 22 ${H}`);
-            path.setAttribute('d', `M22,2 L12,2 A${r},${r} 0 0,0 0,14 L0,${H - 14} A${r},${r} 0 0,0 12,${H - 2} L22,${H - 2}`);
-
-            const pointOnCircle = (center, thetaDeg) => {
-                const theta = thetaDeg * Math.PI / 180;
-                return { x: center.x + r * Math.cos(theta), y: center.y + r * Math.sin(theta) };
-            };
-            const topArc = [270, 247.5, 225, 202.5, 180].map(t => pointOnCircle(topCenter, t));
-            const bottomArc = [180, 157.5, 135, 112.5, 90].map(t => pointOnCircle(bottomCenter, t));
-
-            const tailLen = s;
-            const cornerLen = (Math.PI / 2) * r;
-            const mainLen = Math.max(H - 28, 0);
-            const totalLen = 2 * tailLen + 2 * cornerLen + mainLen;
-
-            const toKeyframe = (point, offset) => ({
-                offset: Math.min(Math.max(offset, 0), 1),
-                top: (point.y / H * 100) + '%',
-                transform: `translateX(${point.x}px)`
-            });
-
-            let t = 0;
-            const keyframes = [toKeyframe({ x: 22, y: 2 }, t)];
-            t += tailLen / totalLen;
-            keyframes.push(toKeyframe(topArc[0], t));
-            for (let i = 1; i < topArc.length; i++) {
-                t += (cornerLen / 4) / totalLen;
-                keyframes.push(toKeyframe(topArc[i], t));
-            }
-            t += mainLen / totalLen;
-            keyframes.push(toKeyframe(bottomArc[0], t));
-            for (let i = 1; i < bottomArc.length; i++) {
-                t += (cornerLen / 4) / totalLen;
-                keyframes.push(toKeyframe(bottomArc[i], t));
-            }
-            keyframes.push(toKeyframe({ x: 22, y: H - 2 }, 1));
-
-            const topSpeed = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--top-speed')) * 1000;
-            const previousRate = tabsNavDividerAnim ? tabsNavDividerAnim.playbackRate : 1;
-            if (tabsNavDividerAnim) tabsNavDividerAnim.cancel();
-            tabsNavDividerAnim = dot.animate(keyframes, {
-                duration: topSpeed,
-                iterations: Infinity,
-                direction: 'alternate',
-                easing: 'linear'
-            });
-            tabsNavDividerAnim.playbackRate = previousRate;
-        }
-
         document.querySelectorAll('.tabs-nav-divider-hitbox').forEach(hitbox => {
+            const dot = hitbox.querySelector('.geo-node');
             hitbox.addEventListener('mouseenter', () => {
-                if (tabsNavDividerAnim) tabsNavDividerAnim.playbackRate = 2;
+                if (dot) dot.getAnimations().forEach(anim => anim.playbackRate = 2);
             });
             hitbox.addEventListener('mouseleave', () => {
-                if (tabsNavDividerAnim) tabsNavDividerAnim.playbackRate = 1;
+                if (dot) dot.getAnimations().forEach(anim => anim.playbackRate = 1);
             });
         });
-
-        updateTabsNavDivider();
-        window.addEventListener('load', updateTabsNavDivider);
-        window.addEventListener('resize', updateTabsNavDivider);
 
         // --- SubTab Logic ---
         function openSubTab(evt, tabId) {
