@@ -48,11 +48,22 @@
         }
 
         body.theme-pure-black {
-            --bg-color: #000000;         
-            --text-main: #eeeeee;        
-            --accent-color: #ffffff;     
-            --text-muted: #888888;       
-            --border-color: #222222;     
+            --bg-color: #000000;
+            --text-main: #eeeeee;
+            --accent-color: #ffffff;
+            --text-muted: #888888;
+            --border-color: #222222;
+            --cursor-dot: #ffffff;
+            --cursor-outline: rgba(255, 255, 255, 0.5);
+            --cursor-hover: rgba(255, 255, 255, 0.15);
+        }
+
+        body.theme-midnight-blue {
+            --bg-color: #191970;
+            --text-main: #e6e8f5;
+            --accent-color: #ffffff;
+            --text-muted: #9aa0c9;
+            --border-color: #2b2b8a;
             --cursor-dot: #ffffff;
             --cursor-outline: rgba(255, 255, 255, 0.5);
             --cursor-hover: rgba(255, 255, 255, 0.15);
@@ -124,7 +135,7 @@
         .theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(128, 128, 128, 0.5); cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative; }
         .theme-btn:hover { transform: scale(1.15); }
         .theme-btn.active { transform: scale(1.3); border-color: var(--accent-color); box-shadow: 0 0 0 1px var(--accent-color); }
-        #btn-dark { background-color: #1a1c23; } #btn-light { background-color: #f4ecd8; } #btn-pure-white { background-color: #ffffff; } #btn-pure-black { background-color: #000000; }
+        #btn-dark { background-color: #1a1c23; } #btn-light { background-color: #f4ecd8; } #btn-pure-white { background-color: #ffffff; } #btn-pure-black { background-color: #000000; } #btn-midnight-blue { background-color: #191970; }
 
         .theme-info-container { position: relative; display: flex; align-items: center; justify-content: center; pointer-events: auto; }
         .theme-tooltip { position: absolute; top: 100%; right: 0; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; transform: translateY(-5px); pointer-events: none; }
@@ -266,6 +277,7 @@
             <button id="btn-light" class="theme-btn interactive-element" aria-label="Light Sepia Theme" title="Light Sepia Theme"></button>
             <button id="btn-pure-white" class="theme-btn interactive-element" aria-label="Pure White Theme" title="Pure White Theme"></button>
             <button id="btn-pure-black" class="theme-btn interactive-element" aria-label="Pure Black Theme" title="Pure Black Theme"></button>
+            <button id="btn-midnight-blue" class="theme-btn interactive-element" aria-label="Midnight Blue Theme" title="Midnight Blue Theme"></button>
             </div>
         <div class="theme-info-container interactive-element">
             <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -869,11 +881,11 @@
         }
 
         // --- Theme Switcher Logic ---
-        const themes = ['dark', 'light', 'pure-white', 'pure-black'];
+        const themes = ['dark', 'light', 'pure-white', 'pure-black', 'midnight-blue'];
         let currentThemeIndex = 0;
 
         function setTheme(themeName) {
-            document.body.classList.remove('theme-light', 'theme-pure-white', 'theme-pure-black');
+            document.body.classList.remove('theme-light', 'theme-pure-white', 'theme-pure-black', 'theme-midnight-blue');
             if (themeName !== 'dark') {
                 document.body.classList.add(`theme-${themeName}`);
             }
@@ -900,6 +912,7 @@
         document.getElementById('btn-light').addEventListener('click', () => setTheme('light'));
         document.getElementById('btn-pure-white').addEventListener('click', () => setTheme('pure-white'));
         document.getElementById('btn-pure-black').addEventListener('click', () => setTheme('pure-black'));
+        document.getElementById('btn-midnight-blue').addEventListener('click', () => setTheme('midnight-blue'));
 
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 't') {
