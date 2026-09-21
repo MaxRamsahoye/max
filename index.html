@@ -100,8 +100,13 @@
         
         @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* Section Divider */
-        .section-divider { width: 200px; max-width: 100%; height: 1px; background-color: var(--accent-color); opacity: 0.5; margin: 0 auto 30px; transition: background-color 0.4s ease; pointer-events: none; }
+        /* Section Divider (matches the description column width, with a hoverable geo-node) */
+        .section-divider { width: 750px; max-width: 100%; margin: 0 auto 30px; pointer-events: none; }
+        .section-divider-hitbox { position: relative; width: 100%; height: 30px; display: flex; align-items: center; pointer-events: auto; cursor: pointer; }
+        .section-divider-line { width: 100%; height: 1px; background-color: var(--accent-color); opacity: 0.5; transition: background-color 0.4s ease; }
+        .section-divider-hitbox .geo-node { top: 50%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) ease-in-out infinite alternate; will-change: transform; }
+
+        @keyframes slideDot { from { left: 0%; } to { left: 100%; } }
 
         #geo-foundation { position: absolute; bottom: 0; left: 0; right: 0; height: 30vh; display: flex; align-items: stretch; justify-content: space-evenly; padding: 0 1vw; z-index: 0; pointer-events: none; overflow: hidden; }
         .node-pillar { position: relative; width: 41px; flex-shrink: 0; height: 100%; pointer-events: auto; cursor: pointer; background-color: var(--hitbox-bg); }
@@ -353,7 +358,12 @@
             </div>
         </header>
 
-        <div class="section-divider" aria-hidden="true"></div>
+        <div class="section-divider" aria-hidden="true">
+            <div class="section-divider-hitbox interactive-element">
+                <div class="section-divider-line"></div>
+                <div class="geo-node"></div>
+            </div>
+        </div>
 
         <main>
             <section id="artifacts" class="section-container fade-in">
@@ -857,6 +867,16 @@
             });
             astrolabe.addEventListener('mouseleave', () => {
                 if(container) container.getAnimations().forEach(anim => anim.playbackRate = 1);
+            });
+        });
+
+        document.querySelectorAll('.section-divider-hitbox').forEach(hitbox => {
+            const dot = hitbox.querySelector('.geo-node');
+            hitbox.addEventListener('mouseenter', () => {
+                if(dot) dot.getAnimations().forEach(anim => anim.playbackRate = 2);
+            });
+            hitbox.addEventListener('mouseleave', () => {
+                if(dot) dot.getAnimations().forEach(anim => anim.playbackRate = 1);
             });
         });
 
