@@ -100,12 +100,8 @@
         
         @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* Section Divider (same ring/node code as the astrolabe, flattened into a line) */
-        .section-divider { display: flex; justify-content: center; padding: 0 20px 60px; pointer-events: none; }
-        .section-divider-line { position: relative; width: 200px; max-width: 100%; height: 1px; background-color: var(--accent-color); opacity: 0.5; transition: background-color 0.4s ease; }
-        .section-divider-line .geo-node { top: 50%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) ease-in-out infinite alternate; will-change: transform; }
-
-        @keyframes slideDot { from { transform: translateX(0) translateZ(0); } to { transform: translateX(200px) translateZ(0); } }
+        /* Section Divider (exact copy of the top astrolabe) */
+        .section-divider { position: relative; width: 350px; height: 350px; margin: 0 auto 60px; pointer-events: none; }
 
         #geo-foundation { position: absolute; bottom: 0; left: 0; right: 0; height: 30vh; display: flex; align-items: stretch; justify-content: space-evenly; padding: 0 1vw; z-index: 0; pointer-events: none; overflow: hidden; }
         .node-pillar { position: relative; width: 41px; flex-shrink: 0; height: 100%; pointer-events: auto; cursor: pointer; background-color: var(--hitbox-bg); }
@@ -358,7 +354,7 @@
         </header>
 
         <div class="section-divider" aria-hidden="true">
-            <div class="section-divider-line"><div class="geo-node"></div></div>
+            <div class="astrolabe"><div class="geo-ring"></div><div class="geo-node-container"><div class="geo-node"></div></div></div>
         </div>
 
         <main>
@@ -856,16 +852,15 @@
         });
 
         // --- Prevent Node Reload & Change Playback Rate Smoothly via JS ---
-        const mainAstrolabe = document.querySelector('.astrolabe');
-        if (mainAstrolabe) {
-            const container = mainAstrolabe.querySelector('.geo-node-container');
-            mainAstrolabe.addEventListener('mouseenter', () => {
+        document.querySelectorAll('.astrolabe').forEach(astrolabe => {
+            const container = astrolabe.querySelector('.geo-node-container');
+            astrolabe.addEventListener('mouseenter', () => {
                 if(container) container.getAnimations().forEach(anim => anim.playbackRate = 2);
             });
-            mainAstrolabe.addEventListener('mouseleave', () => {
+            astrolabe.addEventListener('mouseleave', () => {
                 if(container) container.getAnimations().forEach(anim => anim.playbackRate = 1);
             });
-        }
+        });
 
         // --- Tab Logic ---
         function openTab(evt, tabId) {
