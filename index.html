@@ -748,6 +748,12 @@
     <a href="#home" id="back-to-top" class="interactive-element">&uarr;</a>
 
     <script>
+        // --- Disable Browser Scroll Restoration on Reload ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
         // --- Web Audio API Integration ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
