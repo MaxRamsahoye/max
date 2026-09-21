@@ -101,11 +101,12 @@
         @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         /* Section Divider (matches the Artifacts section width, curves facing down) */
-        .section-divider { width: 1155px; max-width: 100%; margin: 0 auto 30px; pointer-events: none; }
+        .section-divider { width: 1155px; max-width: 100%; margin: 20px auto 40px; pointer-events: none; }
         .section-divider-hitbox { position: relative; width: 100%; height: 22px; display: flex; align-items: flex-start; pointer-events: auto; cursor: pointer; }
         .section-divider-line { width: 100%; height: 22px; overflow: visible; display: block; }
         .section-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
         .section-divider-hitbox .geo-node { top: 0; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) linear infinite alternate; will-change: transform; }
+        .section-divider--flip .section-divider-hitbox { transform: scaleY(-1); }
 
         @keyframes slideDot {
             0%      { left: 0.173%;  transform: translateY(22px); }
@@ -389,6 +390,13 @@
                     <li><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/mechanicsofmetautopia.ai/" target="_blank" class="project-link-title interactive-element"><h3>The Mechanics of Meta-Utopia?: Civilisation Design for Desirable Multi-Cultural Equilibria</h3></a></div></li>
                 </ul>
             </section>
+
+            <div class="section-divider section-divider--flip" aria-hidden="true">
+                <div class="section-divider-hitbox interactive-element">
+                    <svg class="section-divider-line" viewBox="0 0 1155 22" preserveAspectRatio="none"><path d="M2,22 L2,12 A12,12 0 0,1 14,0 L1141,0 A12,12 0 0,1 1153,12 L1153,22"></path></svg>
+                    <div class="geo-node"></div>
+                </div>
+            </div>
 
             <section id="writings" class="section-container fade-in">
                 <h2>Writings</h2>
