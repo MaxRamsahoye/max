@@ -108,9 +108,10 @@
         .section-divider-hitbox .geo-node { top: 50%; left: 0; margin-top: -4px; animation: slideDot var(--top-speed) ease-in-out infinite alternate; will-change: transform; }
 
         @keyframes slideDot {
-            0%   { left: 0%;   transform: translateY(6px); }
-            50%  { left: 50%;  transform: translateY(-6px); }
-            100% { left: 100%; transform: translateY(6px); }
+            0%   { left: 0%;   transform: translateY(-8px); }
+            4%   { left: 4%;   transform: translateY(0); }
+            96%  { left: 96%;  transform: translateY(0); }
+            100% { left: 100%; transform: translateY(-8px); }
         }
 
         #geo-foundation { position: absolute; bottom: 0; left: 0; right: 0; height: 30vh; display: flex; align-items: stretch; justify-content: space-evenly; padding: 0 1vw; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -168,7 +169,7 @@
         /* Main Content */
         .content-wrapper { position: relative; z-index: 10; margin: 0 auto; max-width: 1500px; padding-top: 35vh; padding-bottom: 45vh; pointer-events: none; }
         .hero-container, .section-container, footer { pointer-events: auto; }
-        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px 40px 20px; }
+        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px 80px 20px; }
         .hero-container { display: flex; align-items: center; justify-content: center; gap: 40px; width: 100%; }
         .hero-text-wrapper { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
@@ -365,7 +366,7 @@
 
         <div class="section-divider" aria-hidden="true">
             <div class="section-divider-hitbox interactive-element">
-                <svg class="section-divider-line" viewBox="0 0 750 20" preserveAspectRatio="none"><path d="M0,4 Q375,20 750,4"></path></svg>
+                <svg class="section-divider-line" viewBox="0 0 750 20" preserveAspectRatio="none"><path d="M0,2 C10,2 20,10 30,10 L720,10 C730,10 740,2 750,2"></path></svg>
                 <div class="geo-node"></div>
             </div>
         </div>
