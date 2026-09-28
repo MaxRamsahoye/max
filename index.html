@@ -160,10 +160,8 @@
         /* Theme Switcher */
         #theme-switcher-wrapper { position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 15px; z-index: 99999; pointer-events: none; opacity: 1; visibility: visible; transition: opacity 0.8s ease, visibility 0.8s ease; }
         #theme-switcher { display: flex; gap: 12px; pointer-events: auto; }
-        .theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(128, 128, 128, 0.5); cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative; }
+        .theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(128, 128, 128, 0.5); cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.4s ease; position: relative; }
         .theme-btn:hover { transform: scale(1.15); }
-        .theme-btn.active { transform: scale(1.3); border-color: var(--accent-color); box-shadow: 0 0 0 1px var(--accent-color); }
-        #btn-midnight-blue { background-color: #0a0e1f; } #btn-dark { background-color: #1a1c23; } #btn-light { background-color: #f4ecd8; } #btn-pure-white { background-color: #ffffff; } #btn-pure-black { background-color: #000000; }
 
         .theme-info-container { position: relative; display: flex; align-items: center; justify-content: center; pointer-events: auto; }
         .theme-tooltip { position: absolute; top: 100%; right: 0; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; transform: translateY(-5px); pointer-events: none; }
@@ -307,19 +305,15 @@
 
     <div id="theme-switcher-wrapper">
         <div id="theme-switcher">
-            <button id="btn-midnight-blue" class="theme-btn active interactive-element" aria-label="Midnight Blue Theme" title="Midnight Blue Theme"></button>
-            <button id="btn-dark" class="theme-btn interactive-element" aria-label="Dark Theme" title="Dark Theme"></button>
-            <button id="btn-light" class="theme-btn interactive-element" aria-label="Light Sepia Theme" title="Light Sepia Theme"></button>
-            <button id="btn-pure-white" class="theme-btn interactive-element" aria-label="Pure White Theme" title="Pure White Theme"></button>
-            <button id="btn-pure-black" class="theme-btn interactive-element" aria-label="Pure Black Theme" title="Pure Black Theme"></button>
-            </div>
+            <button id="theme-toggle-btn" class="theme-btn interactive-element" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+        </div>
         <div class="theme-info-container interactive-element">
             <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <div class="theme-tooltip">(t) for toggling themes</div>
+            <div class="theme-tooltip">click or (t) to toggle themes</div>
         </div>
     </div>
 
@@ -1002,6 +996,13 @@
 
         // --- Theme Switcher Logic ---
         const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
+        const themeSwatchColors = {
+            'midnight-blue': '#0a0e1f',
+            'dark': '#1a1c23',
+            'light': '#f4ecd8',
+            'pure-white': '#ffffff',
+            'pure-black': '#000000'
+        };
         let currentThemeIndex = 0;
 
         function setTheme(themeName) {
@@ -1009,9 +1010,8 @@
             if (themeName !== 'midnight-blue') {
                 document.body.classList.add(`theme-${themeName}`);
             }
-            
-            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${themeName}`).classList.add('active');
+
+            document.getElementById('theme-toggle-btn').style.backgroundColor = themeSwatchColors[themeName];
 
             const favicon = document.getElementById('favicon');
             const faviconLight = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23000000%22>M</text></svg>';
@@ -1024,15 +1024,14 @@
                 favicon.href = faviconDark;
                 playThemeSound(true);
             }
-            
+
             currentThemeIndex = themes.indexOf(themeName);
         }
 
-        document.getElementById('btn-midnight-blue').addEventListener('click', () => setTheme('midnight-blue'));
-        document.getElementById('btn-dark').addEventListener('click', () => setTheme('dark'));
-        document.getElementById('btn-light').addEventListener('click', () => setTheme('light'));
-        document.getElementById('btn-pure-white').addEventListener('click', () => setTheme('pure-white'));
-        document.getElementById('btn-pure-black').addEventListener('click', () => setTheme('pure-black'));
+        document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            setTheme(themes[currentThemeIndex]);
+        });
 
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 't') {
