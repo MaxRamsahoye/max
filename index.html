@@ -85,7 +85,7 @@
         }
 
         body.loading { overflow: hidden; }
-        body.loading #theme-switcher-wrapper { opacity: 0; visibility: hidden; }
+        body.loading #top-right-bar { opacity: 0; visibility: hidden; }
 
         /* Scroll Progress Bar (replaces native scrollbar) */
         #progress-bar-track { position: fixed; top: 0; right: 0; width: 4px; height: 100vh; background-color: var(--border-color); z-index: 100000; pointer-events: none; transition: background-color 0.4s ease; }
@@ -157,8 +157,17 @@
 
         @media (max-width: 800px) { .nav-links { left: 50%; transform: translateX(-50%); gap: 20px; } }
 
+        /* Top Right Bar (social icons + theme switcher) */
+        #top-right-bar { position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 20px; z-index: 99999; pointer-events: none; opacity: 1; visibility: visible; transition: opacity 0.8s ease, visibility 0.8s ease; }
+
+        /* Social Icon Bar */
+        #social-bar { display: flex; align-items: center; gap: 14px; pointer-events: auto; }
+        .social-icon-link { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-main); opacity: 0.75; text-decoration: none; transition: opacity 0.3s ease, color 0.4s ease; }
+        .social-icon-link:hover { opacity: 1; color: var(--accent-color); }
+        .social-icon-link svg { width: 18px; height: 18px; }
+
         /* Theme Switcher */
-        #theme-switcher-wrapper { position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 15px; z-index: 99999; pointer-events: none; opacity: 1; visibility: visible; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        #theme-switcher-wrapper { display: flex; align-items: center; gap: 15px; pointer-events: none; }
         #theme-switcher { display: flex; gap: 12px; pointer-events: auto; }
         .theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(128, 128, 128, 0.5); cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.4s ease; position: relative; }
         .theme-btn:hover { transform: scale(1.15); }
@@ -297,23 +306,34 @@
 
     <nav class="nav-links">
         <a href="#home" class="interactive-element">About</a>
+        <a href="#mediums" class="interactive-element">Mediums</a>
         <a href="#artifacts" class="interactive-element">Artifacts</a>
         <a href="#writings" class="interactive-element">Writings</a>
         <a href="#projects" class="interactive-element">Projects</a>
         <a href="#contact" class="interactive-element">Contact</a>
     </nav>
 
-    <div id="theme-switcher-wrapper">
-        <div id="theme-switcher">
-            <button id="theme-toggle-btn" class="theme-btn interactive-element" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+    <div id="top-right-bar">
+        <div id="social-bar">
+            <a href="https://www.linkedin.com/in/max-ramsahoye/" target="_blank" class="social-icon-link interactive-element" aria-label="LinkedIn" title="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+            <a href="https://globalmaximum.substack.com/" target="_blank" class="social-icon-link interactive-element" aria-label="Substack" title="Substack">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>
+            </a>
         </div>
-        <div class="theme-info-container interactive-element">
-            <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            <div class="theme-tooltip">click or (t) to toggle themes</div>
+        <div id="theme-switcher-wrapper">
+            <div id="theme-switcher">
+                <button id="theme-toggle-btn" class="theme-btn interactive-element" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+            </div>
+            <div class="theme-info-container interactive-element">
+                <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <div class="theme-tooltip">click or (t) to toggle themes</div>
+            </div>
         </div>
     </div>
 
@@ -363,7 +383,6 @@
                         <p class="about-list-item"><strong>&mdash; Civilisational Transition</strong>: theory of systems change (macrostrategy) to move from the current system to a <em>viable life-world-system</em>, factoring counter-reactions, co-optation and catastrophic risk.</p>
                         <p class="about-list-item" style="margin-bottom: 25px;"><strong>&mdash; Civilisation Alignment</strong>: aligning the goals of all agents at all scales across all interactions - between individuals and institutions, humans and AIs  -  to ultimately steer the future of civilisation as an emergent whole.</p>
                         <p style="text-align: left;">Across my writings, I principally draw on philosophy &ndash; and its method of <em>conceptual engineering</em> &ndash; to architect novel frames for understanding the world in the age of AI.</p>
-                        <p style="text-align: left;">Projects I have just started include the wiki <a href="https://maxramsahoye.github.io/themetacrisismap/" target="_blank" class="text-link interactive-element"><strong><em>The Metacrisis Map</em></strong></a> and the substack <a href="https://globalmaximum.substack.com/" target="_blank" class="text-link interactive-element"><strong><em>Global Maxima</em></strong></a>.</p>
                     </div>
                 </div>
             </div>
@@ -377,6 +396,20 @@
         </div>
 
         <main>
+            <section id="mediums" class="section-container fade-in">
+                <h2><a href="#mediums" class="interactive-element section-heading-link">Mediums</a></h2>
+                <ul class="project-list">
+                    <li>
+                        <div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/globalmaxima/" target="_blank" class="project-link-title interactive-element"><h3>Global Maxima</h3></a></div>
+                        <p>para-academic blog on the civilisation, AI and the metacrisis</p>
+                    </li>
+                    <li>
+                        <div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/civilisationtheory/#the-map" target="_blank" class="project-link-title interactive-element"><h3>Civilisational <em>(The Civilisational Map)</em></h3></a></div>
+                        <p>a conceptual adaptive system (wiki)</p>
+                    </li>
+                </ul>
+            </section>
+
             <section id="artifacts" class="section-container fade-in">
                 <h2><a href="#artifacts" class="interactive-element section-heading-link">Artifacts</a></h2>
                 <p class="section-sub">Specially designed digital pages.</p>
@@ -715,10 +748,9 @@
                     <div class="projects-left">
                         <ul class="project-list">
                             <li>
-                                <div class="badges-container"><span class="badge">WIP</span></div>
-                                <p class="project-quote"><em>Glossary/Wiki</em></p>
-                                <div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/themetacrisismap/" target="_blank" class="project-link-title interactive-element"><h3>&mdash; The Metacrisis Map</h3></a></div>
-                                <p>A conceptual adaptive system</p>
+                                <p class="project-quote"><em>Website</em></p>
+                                <div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/coordination.ai/" target="_blank" class="project-link-title interactive-element"><h3>&mdash; AICoordination.com</h3></a></div>
+                                <p>a platform on coordination (studies) for the age of AI</p>
                             </li>
                             <li>
                                 <p class="project-quote"><em>Literature Map</em></p>
