@@ -886,16 +886,14 @@
             osc.stop(audioCtx.currentTime + 0.3);
         }
 
-        // --- Sync Section Divider & Mediums Column Width to the Artifacts Entry Width ---
+        // --- Sync Section Divider Width to the Artifacts Entry Width ---
         function syncDividerWidth() {
             const entryList = document.querySelector('#artifacts .project-list');
             const dividers = document.querySelectorAll('.section-divider');
-            const mediumsList = document.querySelector('#mediums .project-list');
-            if (!entryList || (!dividers.length && !mediumsList)) return;
+            if (!entryList || !dividers.length) return;
             const width = entryList.getBoundingClientRect().width;
             if (width < 1) return;
             dividers.forEach(divider => { divider.style.width = width + 'px'; });
-            if (mediumsList) mediumsList.style.width = width + 'px';
         }
 
         syncDividerWidth();
