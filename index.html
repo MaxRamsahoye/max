@@ -205,6 +205,8 @@
         .section-container > p.section-sub, .section-container > h2 { max-width: 650px; margin-left: auto; margin-right: auto; }
         .section-container > p.section-sub { font-size: 1.25rem; color: var(--text-main); text-align: center; margin-bottom: 15px; transition: color 0.4s ease; }
         #artifacts > p.section-sub { margin-bottom: 50px; }
+        .section-container > p.section-sub a { color: var(--accent-color); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.4s ease, opacity 0.3s ease; }
+        .section-container > p.section-sub a:hover { opacity: 0.7; }
 
         /* Tabs */
         .tabs-wrapper { margin-top: 50px; max-width: 100%; display: flex; align-items: stretch; gap: 60px; }
@@ -434,7 +436,7 @@
 
             <section id="writings" class="section-container fade-in">
                 <h2><a href="#writings" class="interactive-element section-heading-link">Writings</a></h2>
-                <p class="section-sub">Collections of writings and projects (77).</p>
+                <p class="section-sub">Collections of writings and projects (77). See all in a complete list <a href="all-writings.html" id="all-writings-link" class="interactive-element">here</a>.</p>
                 <div class="tabs-wrapper">
                     <div class="tabs-nav">
                         <div class="tabs-nav-divider" aria-hidden="true">
@@ -1093,6 +1095,12 @@
                 currentThemeIndex = (currentThemeIndex + 1) % themes.length;
                 setTheme(themes[currentThemeIndex]);
             }
+        });
+
+        // Carry the current theme over to the All Writings page
+        document.getElementById('all-writings-link').addEventListener('click', (e) => {
+            const theme = themes[currentThemeIndex];
+            e.currentTarget.href = theme === 'midnight-blue' ? 'all-writings.html' : `all-writings.html?theme=${theme}`;
         });
 
         // --- Scroll Progress Bar & Back-to-Top Button Logic ---

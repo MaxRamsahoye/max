@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Writings</title>
+    <meta name="description" content="A complete list of Max Ramsahoye’s writings, grouped by collection.">
+
+    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0a0e1f;
+            --text-main: #d8dbe8;
+            --accent-color: #ffffff;
+            --text-muted: #767c99;
+            --border-color: #1a1f38;
+        }
+
+        body.theme-dark {
+            --bg-color: #1a1c23;
+            --text-main: #e2e4e9;
+            --accent-color: #ffffff;
+            --text-muted: #8b92a5;
+            --border-color: #2d313d;
+        }
+
+        body.theme-light {
+            --bg-color: #f4ecd8;
+            --text-main: #3a332a;
+            --accent-color: #000000;
+            --text-muted: #7a6e60;
+            --border-color: #d5c7b3;
+        }
+
+        body.theme-pure-white {
+            --bg-color: #ffffff;
+            --text-main: #111111;
+            --accent-color: #000000;
+            --text-muted: #666666;
+            --border-color: #eeeeee;
+        }
+
+        body.theme-pure-black {
+            --bg-color: #000000;
+            --text-main: #eeeeee;
+            --accent-color: #ffffff;
+            --text-muted: #888888;
+            --border-color: #222222;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        main { max-width: 820px; margin: 0 auto; padding: 60px 16px 120px; }
+
+        .back-link { display: inline-block; font-size: 1.15rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s ease; }
+        .back-link:hover { color: var(--accent-color); }
+
+        h1 { font-size: 3rem; font-weight: 600; color: var(--accent-color); margin-top: 40px; line-height: 1.2; }
+        .page-sub { font-size: 1.25rem; color: var(--text-muted); margin-top: 8px; }
+
+        .collection-group { border-top: 1px solid var(--border-color); margin-top: 50px; padding-top: 10px; }
+        .collection { margin-top: 40px; }
+        .collection h2 { display: flex; align-items: baseline; gap: 15px; font-size: 1.7rem; font-weight: 600; color: var(--accent-color); line-height: 1.3; }
+        .collection h2 .count { flex: none; min-width: 22px; text-align: right; font-size: 1.05rem; font-weight: 400; color: var(--text-muted); }
+
+        .collection h3 { font-size: 1.15rem; font-style: italic; font-weight: 400; color: var(--text-muted); margin: 18px 0 4px 37px; }
+
+        .collection ul { list-style: none; margin-top: 10px; padding-left: 37px; }
+        .collection li { font-size: 1.25rem; padding: 4px 0; }
+        .collection li a { color: var(--text-main); text-decoration: none; transition: color 0.3s ease; }
+        .collection li a:hover { color: var(--accent-color); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        .collection li.group-label { color: var(--text-muted); }
+        .collection li.nested { padding-left: 24px; }
+
+        .status { margin-top: 50px; font-size: 1.25rem; color: var(--text-muted); }
+        .status a { color: var(--accent-color); }
+
+        @media (max-width: 600px) {
+            main { padding-top: 40px; }
+            h1 { font-size: 2.4rem; }
+            .collection h2 { font-size: 1.45rem; gap: 10px; }
+            .collection h3 { margin-left: 0; }
+            .collection ul { padding-left: 0; }
+            .collection li { font-size: 1.15rem; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <a href="index.html#writings" class="back-link">&larr; Max Ramsahoye</a>
+        <h1>All Writings</h1>
+        <p class="page-sub" id="summary">&nbsp;</p>
+        <div id="collections">
+            <p class="status">Loading&hellip;</p>
+        </div>
+    </main>
+
+    <script>
+        // --- Theme (carried over from the main page via ?theme=, 't' cycles) ---
+        const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
+        let currentThemeIndex = 0;
+
+        function setTheme(themeName) {
+            document.body.classList.remove('theme-dark', 'theme-light', 'theme-pure-white', 'theme-pure-black');
+            if (themeName !== 'midnight-blue') {
+                document.body.classList.add(`theme-${themeName}`);
+            }
+            const fill = (themeName === 'light' || themeName === 'pure-white') ? '%23000000' : '%23ffffff';
+            document.getElementById('favicon').href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22${fill}%22>M</text></svg>`;
+            currentThemeIndex = themes.indexOf(themeName);
+        }
+
+        const requestedTheme = new URLSearchParams(location.search).get('theme');
+        if (themes.includes(requestedTheme)) setTheme(requestedTheme);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 't') {
+                setTheme(themes[(currentThemeIndex + 1) % themes.length]);
+            }
+        });
+
+        // --- Build the list from the Writings section of the main page ---
+        // Keep inline italics from the original title, drop the leading dash on sub-entries
+        function cleanTitle(h3) {
+            const span = document.createElement('span');
+            h3.childNodes.forEach(n => {
+                if (n.nodeType === Node.TEXT_NODE) span.appendChild(document.createTextNode(n.textContent));
+                else if (n.nodeName === 'EM' || n.nodeName === 'I') { const em = document.createElement('em'); em.textContent = n.textContent; span.appendChild(em); }
+                else span.appendChild(document.createTextNode(n.textContent));
+            });
+            span.normalize();
+            const first = span.firstChild;
+            if (first && first.nodeType === Node.TEXT_NODE) first.textContent = first.textContent.replace(/^\s*—\s*/, '');
+            return span;
+        }
+
+        function readEntries(container) {
+            const items = [];
+            container.querySelectorAll('li').forEach(li => {
+                li.querySelectorAll('.project-title-wrapper').forEach(wrapper => {
+                    const h3 = wrapper.querySelector('h3');
+                    if (!h3) return;
+                    const link = wrapper.querySelector('a[href]');
+                    if (link) {
+                        items.push({ title: cleanTitle(h3), href: link.getAttribute('href'), nested: wrapper !== li.querySelector('.project-title-wrapper') });
+                    } else {
+                        items.push({ title: cleanTitle(h3), label: true });
+                    }
+                });
+            });
+            return items;
+        }
+
+        function parseWritings(doc) {
+            const groups = [[]];
+            doc.querySelectorAll('#writings .tabs-nav > .tab-btn, #writings .tabs-nav > .tab-break').forEach(el => {
+                if (el.classList.contains('tab-break')) { groups.push([]); return; }
+                const match = (el.getAttribute('onclick') || '').match(/openTab\(event,\s*'([^']+)'\)/);
+                const tab = match && doc.getElementById(match[1]);
+                if (!tab) return;
+                const name = el.querySelector('.tab-title-text').textContent.trim();
+                const subtabs = [...tab.querySelectorAll('.subtab-content')];
+                const sections = subtabs.length
+                    ? subtabs.map(sub => {
+                        const btn = tab.querySelector(`[onclick*="'${sub.id}'"]`);
+                        return { name: btn ? btn.textContent.trim() : '', items: readEntries(sub) };
+                    })
+                    : [{ name: '', items: readEntries(tab) }];
+                groups[groups.length - 1].push({ name, sections });
+            });
+            return groups.filter(g => g.length);
+        }
+
+        function render(groups) {
+            const root = document.getElementById('collections');
+            root.innerHTML = '';
+            let totalEntries = 0, totalCollections = 0;
+
+            groups.forEach(group => {
+                const groupEl = document.createElement('div');
+                groupEl.className = 'collection-group';
+
+                group.forEach(collection => {
+                    const count = collection.sections.reduce((n, s) => n + s.items.filter(i => !i.label).length, 0);
+                    totalEntries += count;
+                    totalCollections++;
+
+                    const section = document.createElement('section');
+                    section.className = 'collection';
+                    const h2 = document.createElement('h2');
+                    const countEl = document.createElement('span');
+                    countEl.className = 'count';
+                    countEl.textContent = count;
+                    h2.append(countEl, document.createTextNode(collection.name));
+                    section.appendChild(h2);
+
+                    collection.sections.forEach(sub => {
+                        if (sub.name) {
+                            const h3 = document.createElement('h3');
+                            h3.textContent = sub.name;
+                            section.appendChild(h3);
+                        }
+                        const ul = document.createElement('ul');
+                        sub.items.forEach(item => {
+                            const li = document.createElement('li');
+                            if (item.label) {
+                                li.className = 'group-label';
+                                li.appendChild(item.title);
+                            } else {
+                                if (item.nested) li.className = 'nested';
+                                const a = document.createElement('a');
+                                a.href = item.href;
+                                a.target = '_blank';
+                                a.rel = 'noopener';
+                                a.appendChild(item.title);
+                                li.appendChild(a);
+                            }
+                            ul.appendChild(li);
+                        });
+                        section.appendChild(ul);
+                    });
+                    groupEl.appendChild(section);
+                });
+                root.appendChild(groupEl);
+            });
+
+            document.getElementById('summary').textContent = `${totalEntries} writings across ${totalCollections} collections.`;
+        }
+
+        fetch('index.html')
+            .then(res => { if (!res.ok) throw new Error(res.status); return res.text(); })
+            .then(html => {
+                const groups = parseWritings(new DOMParser().parseFromString(html, 'text/html'));
+                if (!groups.length) throw new Error('no collections found');
+                render(groups);
+            })
+            .catch(() => {
+                document.getElementById('collections').innerHTML =
+                    '<p class="status">The list couldn’t be loaded. <a href="index.html#writings">View the writings on the main page</a>.</p>';
+            });
+    </script>
+</body>
+</html>
