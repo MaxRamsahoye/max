@@ -53,6 +53,22 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+        /* Scroll Progress Bar (replaces native scrollbar, as on the main page) */
+        #progress-bar-track { position: fixed; top: 0; right: 0; width: 4px; height: 100vh; background-color: var(--border-color); z-index: 100000; pointer-events: none; transition: background-color 0.4s ease; }
+        #progress-bar { width: 100%; height: 0%; background-color: var(--accent-color); transition: background-color 0.4s ease; }
+
+        /* Theme toggle (top right, as on the main page) */
+        #top-right-bar { position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 15px; z-index: 99999; }
+        .theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(128, 128, 128, 0.5); cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.4s ease; }
+        .theme-btn:hover { transform: scale(1.15); }
+        .theme-info-container { position: relative; display: flex; align-items: center; justify-content: center; }
+        .info-icon { display: inline-flex; color: var(--text-muted); transition: color 0.3s ease, transform 0.3s ease; margin-top: 2px; }
+        .theme-info-container:hover .info-icon { color: var(--accent-color); transform: scale(1.1); }
+        .theme-tooltip { position: absolute; top: 100%; right: 0; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; transform: translateY(-5px); pointer-events: none; }
+        .theme-info-container:hover .theme-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
 
         body {
             background-color: var(--bg-color);
@@ -85,28 +101,32 @@
         .collection[hidden], .collection-group[hidden] { display: none; }
 
         .collection-group { border-top: 1px solid var(--border-color); margin-top: 50px; padding-top: 10px; }
-        .collection { margin-top: 40px; }
+        .collection { margin-top: 64px; }
         .collection h2 { display: flex; align-items: baseline; gap: 15px; font-size: 1.7rem; font-weight: 600; color: var(--accent-color); line-height: 1.3; }
         .collection h2 .count { flex: none; min-width: 22px; text-align: right; font-size: 1.05rem; font-weight: 400; color: var(--text-muted); }
 
-        .collection h3 { font-size: 1.15rem; font-style: italic; font-weight: 400; color: var(--text-muted); margin: 18px 0 4px 37px; }
+        .collection h3 { font-size: 1.15rem; font-style: italic; font-weight: 400; color: var(--text-muted); margin: 32px 0 6px 37px; }
 
-        .collection ul { list-style: none; margin-top: 10px; padding-left: 37px; }
-        .collection li { font-size: 1.25rem; padding: 4px 0; }
+        .collection ul { list-style: none; margin-top: 14px; padding-left: 37px; }
+        .collection li { position: relative; font-size: 1.25rem; padding: 9px 0; }
+        /* Diamond outline bullets, hung in the left gutter so titles stay aligned with the heading */
+        .collection li::before { content: ''; position: absolute; left: -20px; top: calc(9px + 0.75em - 4px); width: 6px; height: 6px; border: 1px solid var(--text-muted); transform: rotate(45deg); transition: border-color 0.4s ease; }
         .collection li a { color: var(--text-main); text-decoration: none; transition: color 0.3s ease; }
         .collection li a:hover { color: var(--accent-color); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
         .collection li.group-label { color: var(--text-muted); }
         .collection li.nested { padding-left: 24px; }
+        .collection li.nested::before { left: 4px; }
 
         .status { margin-top: 50px; font-size: 1.25rem; color: var(--text-muted); }
         .status a { color: var(--accent-color); }
 
         @media (max-width: 600px) {
-            main { padding-top: 40px; }
+            main { padding-top: 70px; }
+            #top-right-bar { top: 20px; right: 20px; }
             h1 { font-size: 2.4rem; }
             .collection h2 { font-size: 1.45rem; gap: 10px; }
-            .collection h3 { margin-left: 0; }
-            .collection ul { padding-left: 0; }
+            .collection h3 { margin-left: 20px; }
+            .collection ul { padding-left: 20px; }
             .collection li { font-size: 1.15rem; }
             .filters { gap: 6px 18px; }
             .filter-btn { font-size: 1.05rem; }
@@ -128,6 +148,20 @@
     <script>
         if (window.initialTheme !== 'midnight-blue') document.body.classList.add(`theme-${window.initialTheme}`);
     </script>
+    <div id="progress-bar-track" aria-hidden="true"><div id="progress-bar"></div></div>
+
+    <div id="top-right-bar">
+        <button id="theme-toggle-btn" class="theme-btn" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+        <div class="theme-info-container">
+            <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <div class="theme-tooltip">click or (t) to toggle themes</div>
+        </div>
+    </div>
+
     <main>
         <a href="index.html#writings" class="back-link">&larr; Max Ramsahoye</a>
         <h1>All Writings</h1>
@@ -141,6 +175,13 @@
     <script>
         // --- Theme (carried over from the main page via ?theme=, 't' cycles) ---
         const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
+        const themeSwatchColors = {
+            'midnight-blue': '#0a0e1f',
+            'dark': '#1a1c23',
+            'light': '#f4ecd8',
+            'pure-white': '#ffffff',
+            'pure-black': '#000000'
+        };
         let currentThemeIndex = 0;
 
         function setTheme(themeName) {
@@ -148,13 +189,26 @@
             if (themeName !== 'midnight-blue') {
                 document.body.classList.add(`theme-${themeName}`);
             }
+            document.getElementById('theme-toggle-btn').style.backgroundColor = themeSwatchColors[themeName];
             const fill = (themeName === 'light' || themeName === 'pure-white') ? '%23000000' : '%23ffffff';
             document.getElementById('favicon').href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22${fill}%22>M</text></svg>`;
             currentThemeIndex = themes.indexOf(themeName);
         }
 
-        const requestedTheme = new URLSearchParams(location.search).get('theme');
-        if (themes.includes(requestedTheme)) setTheme(requestedTheme);
+        setTheme(window.initialTheme || 'midnight-blue');
+
+        document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+            setTheme(themes[(currentThemeIndex + 1) % themes.length]);
+        });
+
+        // --- Scroll progress bar ---
+        const progressBar = document.getElementById('progress-bar');
+        function updateProgress() {
+            const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            progressBar.style.height = (scrollable > 0 ? (document.documentElement.scrollTop / scrollable) * 100 : 0) + '%';
+        }
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        window.addEventListener('resize', updateProgress);
 
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 't') {
@@ -266,6 +320,7 @@
                 group.hidden = !group.querySelector('.collection:not([hidden])');
             });
             document.getElementById('summary').textContent = `${pluralise(entries, 'writing')} across ${pluralise(collections, 'collection')}.`;
+            updateProgress();
         }
 
         function makeFilterButton(name, count) {
