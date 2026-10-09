@@ -100,7 +100,16 @@
         .filter-btn[aria-pressed="true"] .label { border-bottom-color: var(--accent-color); }
         .collection[hidden], .collection-group[hidden] { display: none; }
 
-        .collection-group { border-top: 1px solid var(--border-color); margin-top: 50px; padding-top: 10px; }
+        .collection-group { margin-top: 50px; }
+
+        /* Section divider (same line and sliding dot as on the main page) */
+        .section-divider { width: 100%; pointer-events: none; }
+        .section-divider-hitbox { position: relative; width: 100%; height: 22px; display: flex; align-items: center; pointer-events: auto; cursor: pointer; }
+        .section-divider-line { width: 100%; height: 22px; overflow: visible; display: block; }
+        .section-divider-line path { fill: none; stroke: var(--accent-color); stroke-width: 1px; vector-effect: non-scaling-stroke; opacity: 0.5; transition: stroke 0.4s ease; }
+        .section-divider-hitbox .geo-node { position: absolute; top: 50%; left: 0; margin-top: -4px; margin-left: -4px; width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; transition: background-color 0.4s ease; transform: translateZ(0); animation: slideDot 15s linear infinite alternate; will-change: transform; }
+        .section-divider--flip .section-divider-hitbox .geo-node { animation-direction: alternate-reverse; }
+        @keyframes slideDot { from { left: 0%; } to { left: 100%; } }
         .collection { margin-top: 64px; }
         .collection h2 { display: flex; align-items: baseline; gap: 15px; font-size: 1.7rem; font-weight: 600; color: var(--accent-color); line-height: 1.3; }
         .collection h2 .count { flex: none; min-width: 22px; text-align: right; font-size: 1.05rem; font-weight: 400; color: var(--text-muted); }
@@ -379,13 +388,27 @@
             updateView();
         }
 
+        // Divider line with a sliding dot that speeds up on hover, alternating direction like the main page
+        function makeDivider(flip) {
+            const divider = document.createElement('div');
+            divider.className = 'section-divider' + (flip ? ' section-divider--flip' : '');
+            divider.setAttribute('aria-hidden', 'true');
+            divider.innerHTML = '<div class="section-divider-hitbox"><svg class="section-divider-line" viewBox="0 0 1155 22" preserveAspectRatio="none"><path d="M0,11 L1155,11"></path></svg><div class="geo-node"></div></div>';
+            const hitbox = divider.firstChild;
+            const dot = hitbox.querySelector('.geo-node');
+            hitbox.addEventListener('mouseenter', () => dot.getAnimations().forEach(anim => anim.playbackRate = 2));
+            hitbox.addEventListener('mouseleave', () => dot.getAnimations().forEach(anim => anim.playbackRate = 1));
+            return divider;
+        }
+
         function render(groups) {
             const root = document.getElementById('collections');
             root.innerHTML = '';
 
-            groups.forEach(group => {
+            groups.forEach((group, groupIndex) => {
                 const groupEl = document.createElement('div');
                 groupEl.className = 'collection-group';
+                groupEl.appendChild(makeDivider(groupIndex % 2 === 1));
 
                 group.forEach(collection => {
                     const count = collection.sections.reduce((n, s) => n + s.items.filter(i => !i.label).length, 0);
