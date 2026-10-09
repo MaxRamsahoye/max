@@ -81,8 +81,12 @@
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
-            transition: background-color 0.4s ease, color 0.4s ease;
+            transition: background-color 0.4s ease, color 0.4s ease, opacity 0.45s ease;
         }
+
+        /* Page transition to/from the All Writings page */
+        body.page-hidden, html.page-enter body { opacity: 0; }
+        html.skip-loader #loader { display: none; }
 
         body.loading { overflow: hidden; }
         body.loading #top-right-bar { opacity: 0; visibility: hidden; }
@@ -308,8 +312,31 @@
         #back-to-top:hover { background-color: var(--accent-color); color: var(--bg-color); transform: translateY(-4px); }
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 1.05rem; transition: color 0.4s ease; }
     </style>
+    <script>
+        // Coming back from the All Writings page: skip the loading screen, keep its theme and fade in instead.
+        // Runs before the body exists so nothing (loader, wrong theme) can flash first.
+        (function () {
+            let theme = null;
+            try {
+                theme = sessionStorage.getItem('mr-return-from-all-writings');
+                sessionStorage.removeItem('mr-return-from-all-writings');
+            } catch (e) {}
+            const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
+            if (!colours[theme]) return;
+            window.returnTheme = theme;
+            document.documentElement.classList.add('skip-loader', 'page-enter');
+            document.documentElement.style.backgroundColor = colours[theme];
+            setTimeout(() => document.documentElement.classList.remove('page-enter'), 1500);
+        })();
+    </script>
 </head>
 <body class="loading">
+    <script>
+        if (window.returnTheme) {
+            document.body.classList.remove('loading');
+            if (window.returnTheme !== 'midnight-blue') document.body.classList.add(`theme-${window.returnTheme}`);
+        }
+    </script>
 
     <nav class="nav-links">
         <a href="#home" class="interactive-element">About</a>
@@ -1062,7 +1089,7 @@
         };
         let currentThemeIndex = 0;
 
-        function setTheme(themeName) {
+        function setTheme(themeName, silent = false) {
             document.body.classList.remove('theme-dark', 'theme-light', 'theme-pure-white', 'theme-pure-black');
             if (themeName !== 'midnight-blue') {
                 document.body.classList.add(`theme-${themeName}`);
@@ -1076,10 +1103,10 @@
 
             if (themeName === 'light' || themeName === 'pure-white') {
                 favicon.href = faviconLight;
-                playThemeSound(false);
+                if (!silent) playThemeSound(false);
             } else {
                 favicon.href = faviconDark;
-                playThemeSound(true);
+                if (!silent) playThemeSound(true);
             }
 
             currentThemeIndex = themes.indexOf(themeName);
@@ -1097,10 +1124,31 @@
             }
         });
 
-        // Carry the current theme over to the All Writings page
+        // --- Page transitions to/from the All Writings page ---
+        if (themes.includes(window.returnTheme)) {
+            setTheme(window.returnTheme, true);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('page-enter');
+                document.documentElement.style.backgroundColor = '';
+            }));
+        }
+
+        // Fade out, then go to All Writings carrying the current theme
         document.getElementById('all-writings-link').addEventListener('click', (e) => {
             const theme = themes[currentThemeIndex];
             e.currentTarget.href = theme === 'midnight-blue' ? 'all-writings.html' : `all-writings.html?theme=${theme}`;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            const href = e.currentTarget.href;
+            document.body.classList.add('page-hidden');
+            setTimeout(() => { location.href = href; }, 450);
+        });
+
+        // Restored from the back/forward cache: undo the fade-out, and drop the return flag (no loader is shown anyway)
+        window.addEventListener('pageshow', (e) => {
+            if (!e.persisted) return;
+            document.body.classList.remove('page-hidden');
+            try { sessionStorage.removeItem('mr-return-from-all-writings'); } catch (err) {}
         });
 
         // --- Scroll Progress Bar & Back-to-Top Button Logic ---

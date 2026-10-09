@@ -60,8 +60,11 @@
             color: var(--text-main);
             line-height: 1.5;
             min-height: 100vh;
-            transition: background-color 0.4s ease, color 0.4s ease;
+            transition: background-color 0.4s ease, color 0.4s ease, opacity 0.45s ease;
         }
+
+        /* Page transition: fade in on arrival, fade out before leaving */
+        body.page-hidden, html.page-enter body { opacity: 0; }
 
         main { max-width: 820px; margin: 0 auto; padding: 60px 16px 120px; }
 
@@ -70,6 +73,16 @@
 
         h1 { font-size: 3rem; font-weight: 600; color: var(--accent-color); margin-top: 40px; line-height: 1.2; }
         .page-sub { font-size: 1.25rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* Collection filter menu */
+        .filters { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 30px; }
+        .filter-btn { background: none; border: none; padding: 2px 0; font-family: inherit; font-size: 1.15rem; font-weight: 600; color: var(--text-muted); cursor: pointer; text-align: left; transition: color 0.3s ease; }
+        .filter-btn:hover { color: var(--text-main); }
+        .filter-btn .n { font-weight: 400; font-size: 0.9rem; margin-right: 6px; }
+        .filter-btn .label { border-bottom: 1px solid transparent; transition: border-color 0.3s ease; }
+        .filter-btn[aria-pressed="true"] { color: var(--accent-color); }
+        .filter-btn[aria-pressed="true"] .label { border-bottom-color: var(--accent-color); }
+        .collection[hidden], .collection-group[hidden] { display: none; }
 
         .collection-group { border-top: 1px solid var(--border-color); margin-top: 50px; padding-top: 10px; }
         .collection { margin-top: 40px; }
@@ -95,14 +108,31 @@
             .collection h3 { margin-left: 0; }
             .collection ul { padding-left: 0; }
             .collection li { font-size: 1.15rem; }
+            .filters { gap: 6px 18px; }
+            .filter-btn { font-size: 1.05rem; }
         }
     </style>
+    <script>
+        // Applied before the body exists so the page arrives in the right theme, hidden, then fades in
+        (function () {
+            const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
+            const theme = new URLSearchParams(location.search).get('theme');
+            window.initialTheme = colours[theme] ? theme : 'midnight-blue';
+            document.documentElement.classList.add('page-enter');
+            document.documentElement.style.backgroundColor = colours[window.initialTheme];
+            setTimeout(() => document.documentElement.classList.remove('page-enter'), 1500);
+        })();
+    </script>
 </head>
 <body>
+    <script>
+        if (window.initialTheme !== 'midnight-blue') document.body.classList.add(`theme-${window.initialTheme}`);
+    </script>
     <main>
         <a href="index.html#writings" class="back-link">&larr; Max Ramsahoye</a>
         <h1>All Writings</h1>
         <p class="page-sub" id="summary">&nbsp;</p>
+        <div class="filters" id="filters" role="group" aria-label="Filter by collection"></div>
         <div id="collections">
             <p class="status">Loading&hellip;</p>
         </div>
@@ -130,6 +160,37 @@
             if (e.key.toLowerCase() === 't') {
                 setTheme(themes[(currentThemeIndex + 1) % themes.length]);
             }
+        });
+
+        // --- Page transitions ---
+        let revealed = false;
+        function revealPage() {
+            if (revealed) return;
+            revealed = true;
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('page-enter');
+                document.documentElement.style.backgroundColor = '';
+            }));
+        }
+        setTimeout(revealPage, 800);
+
+        // Tell the main page to skip its loading screen (and keep this theme) when we go back to it,
+        // whether by the back link or the browser's back button
+        window.addEventListener('pagehide', () => {
+            try { sessionStorage.setItem('mr-return-from-all-writings', themes[currentThemeIndex]); } catch (e) {}
+        });
+
+        // Restored from the back/forward cache after fading out: show the page again
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) document.body.classList.remove('page-hidden');
+        });
+
+        document.querySelector('.back-link').addEventListener('click', (e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            const href = e.currentTarget.href;
+            document.body.classList.add('page-hidden');
+            setTimeout(() => { location.href = href; }, 450);
         });
 
         // --- Build the list from the Writings section of the main page ---
@@ -184,10 +245,68 @@
             return groups.filter(g => g.length);
         }
 
+        // --- Collection filter: "All" on by default. Picking a collection while "All" is on shows just that one;
+        // further picks add or remove collections, and deselecting the last one goes back to "All". ---
+        const collectionViews = [];
+        let selected = new Set();
+
+        function pluralise(n, word) { return `${n} ${word}${n === 1 ? '' : 's'}`; }
+
+        function updateView() {
+            const showAll = selected.size === 0;
+            let entries = 0, collections = 0;
+            collectionViews.forEach((view, i) => {
+                const visible = showAll || selected.has(i);
+                view.section.hidden = !visible;
+                view.button.setAttribute('aria-pressed', String(!showAll && selected.has(i)));
+                if (visible) { entries += view.count; collections++; }
+            });
+            document.getElementById('filter-all').setAttribute('aria-pressed', String(showAll));
+            document.querySelectorAll('.collection-group').forEach(group => {
+                group.hidden = !group.querySelector('.collection:not([hidden])');
+            });
+            document.getElementById('summary').textContent = `${pluralise(entries, 'writing')} across ${pluralise(collections, 'collection')}.`;
+        }
+
+        function makeFilterButton(name, count) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'filter-btn';
+            if (count !== undefined) {
+                const n = document.createElement('span');
+                n.className = 'n';
+                n.textContent = count;
+                btn.appendChild(n);
+            }
+            const label = document.createElement('span');
+            label.className = 'label';
+            label.textContent = name;
+            btn.appendChild(label);
+            return btn;
+        }
+
+        function buildFilters() {
+            const filters = document.getElementById('filters');
+            const allBtn = makeFilterButton('All');
+            allBtn.id = 'filter-all';
+            allBtn.addEventListener('click', () => { selected.clear(); updateView(); });
+            filters.appendChild(allBtn);
+
+            collectionViews.forEach((view, i) => {
+                view.button = makeFilterButton(view.name, view.count);
+                view.button.addEventListener('click', () => {
+                    if (selected.has(i)) selected.delete(i);
+                    else selected.add(i);
+                    updateView();
+                });
+                filters.appendChild(view.button);
+            });
+            updateView();
+        }
+
         function render(groups) {
             const root = document.getElementById('collections');
             root.innerHTML = '';
-            let totalEntries = 0, totalCollections = 0;
 
             groups.forEach(group => {
                 const groupEl = document.createElement('div');
@@ -195,8 +314,6 @@
 
                 group.forEach(collection => {
                     const count = collection.sections.reduce((n, s) => n + s.items.filter(i => !i.label).length, 0);
-                    totalEntries += count;
-                    totalCollections++;
 
                     const section = document.createElement('section');
                     section.className = 'collection';
@@ -233,11 +350,12 @@
                         section.appendChild(ul);
                     });
                     groupEl.appendChild(section);
+                    collectionViews.push({ name: collection.name, count, section });
                 });
                 root.appendChild(groupEl);
             });
 
-            document.getElementById('summary').textContent = `${totalEntries} writings across ${totalCollections} collections.`;
+            buildFilters();
         }
 
         fetch('index.html')
@@ -246,10 +364,12 @@
                 const groups = parseWritings(new DOMParser().parseFromString(html, 'text/html'));
                 if (!groups.length) throw new Error('no collections found');
                 render(groups);
+                revealPage();
             })
             .catch(() => {
                 document.getElementById('collections').innerHTML =
                     '<p class="status">The list couldn’t be loaded. <a href="index.html#writings">View the writings on the main page</a>.</p>';
+                revealPage();
             });
     </script>
 </body>
