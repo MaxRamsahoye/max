@@ -117,6 +117,11 @@
         .collection li.nested { padding-left: 24px; }
         .collection li.nested::before { left: 4px; }
 
+        /* Back to top (as on the main page) */
+        #back-to-top { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background-color: var(--bg-color); color: var(--accent-color); border: 1px solid var(--border-color); border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease; text-decoration: none; z-index: 999; }
+        #back-to-top.visible { opacity: 1; pointer-events: auto; }
+        #back-to-top:hover { background-color: var(--accent-color); color: var(--bg-color); transform: translateY(-4px); }
+
         .status { margin-top: 50px; font-size: 1.25rem; color: var(--text-muted); }
         .status a { color: var(--accent-color); }
 
@@ -172,6 +177,8 @@
         </div>
     </main>
 
+    <a href="#" id="back-to-top" aria-label="Back to top" title="Back to top">&uarr;</a>
+
     <script>
         // --- Theme (carried over from the main page via ?theme=, 't' cycles) ---
         const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
@@ -201,12 +208,25 @@
             setTheme(themes[(currentThemeIndex + 1) % themes.length]);
         });
 
-        // --- Scroll progress bar ---
+        // --- Scroll progress bar & back-to-top button ---
         const progressBar = document.getElementById('progress-bar');
+        const backToTopBtn = document.getElementById('back-to-top');
         function updateProgress() {
+            const scrollTop = document.documentElement.scrollTop;
             const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            progressBar.style.height = (scrollable > 0 ? (document.documentElement.scrollTop / scrollable) * 100 : 0) + '%';
+            progressBar.style.height = (scrollable > 0 ? (scrollTop / scrollable) * 100 : 0) + '%';
+            backToTopBtn.classList.toggle('visible', scrollTop > 200);
         }
+        backToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
         window.addEventListener('scroll', updateProgress, { passive: true });
         window.addEventListener('resize', updateProgress);
 
