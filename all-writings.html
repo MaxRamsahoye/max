@@ -98,6 +98,9 @@
         .filter-btn .label { border-bottom: 1px solid transparent; transition: border-color 0.3s ease; }
         .filter-btn[aria-pressed="true"] { color: var(--accent-color); }
         .filter-btn[aria-pressed="true"] .label { border-bottom-color: var(--accent-color); }
+        /* Vertical divider between collection groups; kept in one flex item with the group's last button so it never starts a line */
+        .filter-tail { display: inline-flex; align-items: center; gap: 24px; }
+        .filter-divider { width: 1px; height: 1.2rem; background-color: var(--accent-color); opacity: 0.5; transition: background-color 0.4s ease; }
         .collection[hidden], .collection-group[hidden] { display: none; }
 
         .collection-group { margin-top: 50px; }
@@ -145,6 +148,7 @@
             .collection ul { padding-left: 20px; }
             .collection li { font-size: 1.3rem; }
             .filters { gap: 6px 18px; }
+            .filter-tail { gap: 18px; }
             .filter-btn { font-size: 1.05rem; }
         }
     </style>
@@ -385,7 +389,18 @@
                     else selected.add(i);
                     updateView();
                 });
-                filters.appendChild(view.button);
+                const next = collectionViews[i + 1];
+                if (next && next.group !== view.group) {
+                    const tail = document.createElement('span');
+                    tail.className = 'filter-tail';
+                    const divider = document.createElement('span');
+                    divider.className = 'filter-divider';
+                    divider.setAttribute('aria-hidden', 'true');
+                    tail.append(view.button, divider);
+                    filters.appendChild(tail);
+                } else {
+                    filters.appendChild(view.button);
+                }
             });
             updateView();
         }
@@ -450,7 +465,7 @@
                         section.appendChild(ul);
                     });
                     groupEl.appendChild(section);
-                    collectionViews.push({ name: collection.name, count, section });
+                    collectionViews.push({ name: collection.name, count, section, group: groupIndex });
                 });
                 root.appendChild(groupEl);
             });
