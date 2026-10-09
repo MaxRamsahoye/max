@@ -134,7 +134,7 @@
         /* Back to top (as on the main page) */
         #back-to-top { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background-color: var(--bg-color); color: var(--accent-color); border: 1px solid var(--border-color); border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease; text-decoration: none; z-index: 999; }
         #back-to-top.visible { opacity: 1; pointer-events: auto; }
-        #back-to-top:hover { background-color: var(--accent-color); color: var(--bg-color); transform: translateY(-4px); }
+        #back-to-top:hover, #back-to-top.key-pressed { background-color: var(--accent-color); color: var(--bg-color); transform: translateY(-4px); }
 
         .status { margin-top: 50px; font-size: 1.25rem; color: var(--text-muted); }
         .status a { color: var(--accent-color); }
@@ -236,9 +236,18 @@
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+        // Backspace shows the arrow's hover state briefly, as if it had been hovered and clicked
+        let backToTopFlashTimer;
+        function flashBackToTop() {
+            backToTopBtn.classList.add('key-pressed');
+            clearTimeout(backToTopFlashTimer);
+            backToTopFlashTimer = setTimeout(() => backToTopBtn.classList.remove('key-pressed'), 600);
+        }
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace') {
                 e.preventDefault();
+                flashBackToTop();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
