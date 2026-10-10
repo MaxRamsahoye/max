@@ -893,18 +893,22 @@
 
         // --- Web Audio API Integration ---
         // --- Sound: soft, synthesised piano notes (no audio files) ---
+        // Kept deliberately low, mellow and quiet: notes stay at or below E5, only the lower harmonics are used,
+        // the top end is filtered off, and a cap on ringing notes stops rapid hovering or clicking from piling up
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx, pianoOut;
+        const PIANO_LEAD = 0.03;      // schedule slightly ahead so a busy page never starts a note abruptly (a click)
+        const MAX_RINGING = 6;        // most notes allowed to ring at once
+        let ringingUntil = [];
 
-        // Shared output: gentle low-pass for warmth, a soft room reverb, and a compressor so chords never clip
+        // Shared output: low-pass for warmth, a soft room reverb, a fixed master volume and a gentle
+        // safety limiter (a soft curve that only touches the signal if it ever gets loud)
         function buildPianoOutput(ctx) {
             const input = ctx.createGain();
             const warmth = ctx.createBiquadFilter();
-            warmth.type = 'lowpass'; warmth.frequency.value = 4200; warmth.Q.value = 0.5;
-            const compressor = ctx.createDynamicsCompressor();
-            compressor.threshold.value = -18; compressor.ratio.value = 3;
+            warmth.type = 'lowpass'; warmth.frequency.value = 2400; warmth.Q.value = 0.4;
             const dry = ctx.createGain(); dry.gain.value = 0.85;
-            const wet = ctx.createGain(); wet.gain.value = 0.32;
+            const wet = ctx.createGain(); wet.gain.value = 0.3;
             const reverb = ctx.createConvolver();
             const seconds = 2.6, length = Math.floor(ctx.sampleRate * seconds);
             const impulse = ctx.createBuffer(2, length, ctx.sampleRate);
@@ -913,17 +917,22 @@
                 for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3.2);
             }
             reverb.buffer = impulse;
+            const master = ctx.createGain(); master.gain.value = 1.4;
+            const limiter = ctx.createWaveShaper();
+            const curve = new Float32Array(1024);
+            for (let i = 0; i < curve.length; i++) { const x = (i / (curve.length - 1)) * 2 - 1; curve[i] = Math.tanh(x * 1.5) / Math.tanh(1.5) * 0.25; }
+            limiter.curve = curve;
             input.connect(warmth);
             warmth.connect(dry); warmth.connect(reverb); reverb.connect(wet);
-            dry.connect(compressor); wet.connect(compressor);
-            compressor.connect(ctx.destination);
+            dry.connect(master); wet.connect(master);
+            master.connect(limiter); limiter.connect(ctx.destination);
             return input;
         }
 
-        // One piano note: slightly stretched harmonics (as in real strings), quick hammer attack,
-        // a fast initial fall then a long fade, with higher harmonics dying away sooner
+        // One piano note: a few slightly stretched harmonics (as in real strings), a soft hammer attack,
+        // a quick initial fall then a long fade, with the higher harmonics dying away sooner
         function pianoNote(ctx, out, freq, when, level, length = 2.6) {
-            const partials = [1, 0.42, 0.22, 0.12, 0.06, 0.03];
+            const partials = [1, 0.35, 0.14, 0.05];
             const norm = level / partials.reduce((a, b) => a + b, 0);
             const stretch = 0.00035;
             partials.forEach((amp, i) => {
@@ -936,10 +945,10 @@
                     osc.detune.value = cents;
                     const env = ctx.createGain();
                     const peak = amp * norm * (v ? 0.5 : 1);
-                    const fade = (length / 4) / (1 + 0.9 * i);
+                    const fade = (length / 4) / (1 + 1.2 * i);
                     env.gain.setValueAtTime(0, when);
-                    env.gain.linearRampToValueAtTime(peak, when + 0.005);
-                    env.gain.setTargetAtTime(peak * 0.4, when + 0.005, 0.07);
+                    env.gain.linearRampToValueAtTime(peak, when + 0.012);
+                    env.gain.setTargetAtTime(peak * 0.45, when + 0.012, 0.08);
                     env.gain.setTargetAtTime(0, when + 0.25, fade);
                     osc.connect(env); env.connect(out);
                     osc.start(when);
@@ -948,8 +957,17 @@
             });
         }
 
-        // C major pentatonic from G3 to C6: every combination sounds consonant
-        const pianoScale = [196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+        // C major pentatonic from G3 up to E5 only: every combination sounds consonant and nothing is shrill
+        const pianoScale = [196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+
+        // Plays a note only if fewer than MAX_RINGING notes are still sounding (unless it must play)
+        function playPiano(freq, level, length, delay = 0, force = false) {
+            const when = audioCtx.currentTime + PIANO_LEAD + delay;
+            ringingUntil = ringingUntil.filter(t => t > audioCtx.currentTime);
+            if (!force && ringingUntil.length >= MAX_RINGING) return;
+            ringingUntil.push(when + length * 0.5);
+            pianoNote(audioCtx, pianoOut, freq, when, level, length);
+        }
 
         function initAudio() {
             if (!audioCtx) {
@@ -963,34 +981,41 @@
         document.body.addEventListener('click', initAudio, { once: true });
         document.body.addEventListener('keydown', initAudio, { once: true });
 
-        // Hovering wanders gently up and down the scale, so moving across links plays a slow melody
-        let hoverStep = 8, lastHoverAt = 0;
+        // Hovering wanders gently up and down the scale (E4 to E5), so moving across links plays a slow melody
+        let hoverStep = 7, lastHoverAt = 0;
         function playHoverSound() {
             if (!audioCtx || audioCtx.state === 'suspended') return;
             const now = audioCtx.currentTime;
-            if (now - lastHoverAt < 0.07) return;
+            if (now - lastHoverAt < 0.12) return;
             lastHoverAt = now;
             const moves = [-2, -1, -1, 1, 1, 2];
-            hoverStep = Math.min(pianoScale.length - 1, Math.max(5, hoverStep + moves[Math.floor(Math.random() * moves.length)]));
-            pianoNote(audioCtx, pianoOut, pianoScale[hoverStep], now, 0.05, 2.2);
+            hoverStep = Math.min(pianoScale.length - 1, Math.max(4, hoverStep + moves[Math.floor(Math.random() * moves.length)]));
+            playPiano(pianoScale[hoverStep], 0.04, 2.2);
         }
 
-        // A soft two-note chord: the current note with the one a fifth below
+        // A soft two-note chord: a mid note with the one a fifth below; rapid repeat clicks are spaced out
+        let lastClickAt = 0;
         function playClickSound() {
             if (!audioCtx) initAudio();
             if (audioCtx.state === 'suspended') return;
             const now = audioCtx.currentTime;
-            pianoNote(audioCtx, pianoOut, pianoScale[hoverStep] / 1.5, now, 0.07, 2.8);
-            pianoNote(audioCtx, pianoOut, pianoScale[hoverStep], now + 0.03, 0.06, 2.8);
+            if (now - lastClickAt < 0.15) return;
+            lastClickAt = now;
+            const top = pianoScale[Math.min(hoverStep, 7)];   // never above C5
+            playPiano(top / 1.5, 0.05, 2.6, 0, true);
+            playPiano(top, 0.04, 2.6, 0.03, true);
         }
 
         // A rolled chord: falling for dark themes, rising for light ones
+        let lastThemeAt = 0;
         function playThemeSound(isDark) {
             if (!audioCtx) initAudio();
             if (audioCtx.state === 'suspended') return;
             const now = audioCtx.currentTime;
+            if (now - lastThemeAt < 0.25) return;
+            lastThemeAt = now;
             const chord = isDark ? [523.25, 392.00, 329.63, 220.00] : [261.63, 392.00, 493.88, 659.25];
-            chord.forEach((freq, i) => pianoNote(audioCtx, pianoOut, freq, now + i * 0.085, 0.06, 3.2));
+            chord.forEach((freq, i) => playPiano(freq, 0.045, 3.0, i * 0.085, true));
         }
 
         // --- Sync Section Divider Width to the Artifacts Entry Width ---
