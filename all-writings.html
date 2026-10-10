@@ -9,7 +9,7 @@
     <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
     <style>
         /* Second typeface (toggle with f): ET Bembo, self-hosted from fonts/et-book (MIT licence) */
@@ -19,10 +19,16 @@
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-bold-line-figures.woff') format('woff'); font-weight: 700 900; font-style: normal; font-display: swap; }
         :root { --font-body: 'Cormorant Garamond', serif; }
         html.font-bembo { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
+        /* Font weights go through these so Cormorant Garamond (which reads thin) is set one weight heavier
+           than written, while ET Bembo keeps the weights as written. Cormorant's heaviest weight is 700. */
+        :root { --fw-300: 400; --fw-400: 500; --fw-500: 600; --fw-600: 700; --fw-700: 700; }
+        html.font-bembo { --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600; --fw-700: 700; }
+        body { font-weight: var(--fw-400); }
+        h1, h2, h3, h4, h5, h6, strong, b { font-weight: var(--fw-700); }
 
         :root {
             --bg-color: #0a0e1f;
-            --text-main: #d8dbe8;
+            --text-main: #f1f3fa;
             --accent-color: #ffffff;
             --text-muted: #767c99;
             --border-color: #1a1f38;
@@ -30,7 +36,7 @@
 
         body.theme-dark {
             --bg-color: #1a1c23;
-            --text-main: #e2e4e9;
+            --text-main: #f4f5f8;
             --accent-color: #ffffff;
             --text-muted: #8b92a5;
             --border-color: #2d313d;
@@ -38,7 +44,7 @@
 
         body.theme-light {
             --bg-color: #f4ecd8;
-            --text-main: #3a332a;
+            --text-main: #1e1914;
             --accent-color: #000000;
             --text-muted: #7a6e60;
             --border-color: #d5c7b3;
@@ -46,7 +52,7 @@
 
         body.theme-pure-white {
             --bg-color: #ffffff;
-            --text-main: #111111;
+            --text-main: #000000;
             --accent-color: #000000;
             --text-muted: #666666;
             --border-color: #eeeeee;
@@ -54,7 +60,7 @@
 
         body.theme-pure-black {
             --bg-color: #000000;
-            --text-main: #eeeeee;
+            --text-main: #fafafa;
             --accent-color: #ffffff;
             --text-muted: #888888;
             --border-color: #222222;
@@ -75,7 +81,7 @@
         .theme-info-container { position: relative; display: flex; align-items: center; justify-content: center; }
         .info-icon { display: inline-flex; color: var(--text-muted); transition: color 0.3s ease, transform 0.3s ease; margin-top: 2px; }
         .theme-info-container:hover .info-icon { color: var(--accent-color); transform: scale(1.1); }
-        .theme-tooltip { position: absolute; top: 100%; right: 0; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; transform: translateY(-5px); pointer-events: none; }
+        .theme-tooltip { position: absolute; top: 100%; right: 0; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: var(--fw-600); white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; transform: translateY(-5px); pointer-events: none; }
         .theme-info-container:hover .theme-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
 
         body {
@@ -96,14 +102,14 @@
         .back-link { position: absolute; top: 25px; left: 25px; height: 22px; display: flex; align-items: center; font-size: 1.4rem; color: var(--text-muted); text-decoration: none; z-index: 99999; transition: color 0.3s ease; }
         .back-link:hover { color: var(--accent-color); }
 
-        h1 { font-size: 3rem; font-weight: 600; color: var(--accent-color); margin-top: 40px; line-height: 1.2; }
+        h1 { font-size: 3rem; font-weight: var(--fw-600); color: var(--accent-color); margin-top: 40px; line-height: 1.2; }
         .page-sub { font-size: 1.25rem; color: var(--text-muted); margin-top: 8px; }
 
         /* Collection filter menu */
         .filters { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 30px; }
-        .filter-btn { background: none; border: none; padding: 2px 0; font-family: inherit; font-size: 1.15rem; font-weight: 600; color: var(--text-muted); cursor: pointer; text-align: left; transition: color 0.3s ease; }
+        .filter-btn { background: none; border: none; padding: 2px 0; font-family: inherit; font-size: 1.15rem; font-weight: var(--fw-600); color: var(--text-muted); cursor: pointer; text-align: left; transition: color 0.3s ease; }
         .filter-btn:hover { color: var(--text-main); }
-        .filter-btn .n { font-weight: 400; font-size: 0.9rem; margin-right: 6px; }
+        .filter-btn .n { font-weight: var(--fw-400); font-size: 0.9rem; margin-right: 6px; }
         .filter-btn .label { border-bottom: 1px solid transparent; transition: border-color 0.3s ease; }
         .filter-btn[aria-pressed="true"] { color: var(--accent-color); }
         .filter-btn[aria-pressed="true"] .label { border-bottom-color: var(--accent-color); }
@@ -123,10 +129,10 @@
         .section-divider--flip .section-divider-hitbox .geo-node { animation-direction: alternate-reverse; }
         @keyframes slideDot { from { left: 0%; } to { left: 100%; } }
         .collection { margin-top: 64px; }
-        .collection h2 { display: flex; align-items: baseline; gap: 15px; font-size: 1.7rem; font-weight: 600; color: var(--accent-color); line-height: 1.3; }
-        .collection h2 .count { flex: none; min-width: 22px; text-align: right; font-size: 1.05rem; font-weight: 400; color: var(--text-muted); }
+        .collection h2 { display: flex; align-items: baseline; gap: 15px; font-size: 1.7rem; font-weight: var(--fw-600); color: var(--accent-color); line-height: 1.3; }
+        .collection h2 .count { flex: none; min-width: 22px; text-align: right; font-size: 1.05rem; font-weight: var(--fw-400); color: var(--text-muted); }
 
-        .collection h3 { font-size: 1.35rem; font-style: italic; font-weight: 400; color: var(--text-muted); margin: 32px 0 6px 37px; }
+        .collection h3 { font-size: 1.35rem; font-style: italic; font-weight: var(--fw-400); color: var(--text-muted); margin: 32px 0 6px 37px; }
 
         .collection ul { list-style: none; margin-top: 14px; padding-left: 63px; }
         .collection li { position: relative; font-size: 1.45rem; padding: 9px 0; }
@@ -138,7 +144,7 @@
            lining up with the middle of the capitals at any font size. The margins hang it 20px into the gutter without
            moving the text (-20 + 6 + 14 = 0). */
         .collection li::before { content: ''; display: inline-block; box-sizing: border-box; width: 6px; height: 6px; margin: 0 14px 0 -20px; vertical-align: calc(var(--bullet-raise) - 3px); border: 1px solid var(--text-muted); transform: rotate(45deg); transition: border-color 0.4s ease; }
-        .collection li a { color: var(--accent-color); font-weight: 500; text-decoration: none; transition: color 0.4s ease; }
+        .collection li a { color: var(--accent-color); font-weight: var(--fw-500); text-decoration: none; transition: color 0.4s ease; }
         .collection li a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
         .collection li.group-label { color: var(--text-muted); }
         .collection li.nested { padding-left: 24px; }
