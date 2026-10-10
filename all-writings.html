@@ -12,6 +12,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 
     <style>
+        /* Second typeface (toggle with f): ET Bembo, self-hosted from fonts/et-book (MIT licence) */
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-roman-line-figures.woff') format('woff'); font-weight: 300 500; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-display-italic-old-style-figures.woff') format('woff'); font-weight: 300 500; font-style: italic; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-semi-bold-old-style-figures.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-bold-line-figures.woff') format('woff'); font-weight: 700 900; font-style: normal; font-display: swap; }
+        :root { --font-body: 'Cormorant Garamond', serif; }
+        html.font-bembo { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
+
         :root {
             --bg-color: #0a0e1f;
             --text-main: #d8dbe8;
@@ -72,7 +80,7 @@
 
         body {
             background-color: var(--bg-color);
-            font-family: 'Cormorant Garamond', serif;
+            font-family: var(--font-body);
             color: var(--text-main);
             line-height: 1.5;
             min-height: 100vh;
@@ -123,10 +131,13 @@
         .collection ul { list-style: none; margin-top: 14px; padding-left: 63px; }
         .collection li { position: relative; font-size: 1.45rem; padding: 9px 0; }
         /* Diamond outline bullets, hung in the left gutter so titles stay aligned with the heading */
-        /* Inline so it sits on the text's own baseline: its centre is raised half the cap height (0.32em) above the baseline,
+        /* Half the cap height of each typeface: where the bullet's centre sits above the baseline */
+        :root { --bullet-raise: 0.32em; }
+        html.font-bembo { --bullet-raise: 0.34em; }
+        /* Inline so it sits on the text's own baseline: its centre is raised half the cap height (--bullet-raise) above the baseline,
            lining up with the middle of the capitals at any font size. The margins hang it 20px into the gutter without
            moving the text (-20 + 6 + 14 = 0). */
-        .collection li::before { content: ''; display: inline-block; box-sizing: border-box; width: 6px; height: 6px; margin: 0 14px 0 -20px; vertical-align: calc(0.32em - 3px); border: 1px solid var(--text-muted); transform: rotate(45deg); transition: border-color 0.4s ease; }
+        .collection li::before { content: ''; display: inline-block; box-sizing: border-box; width: 6px; height: 6px; margin: 0 14px 0 -20px; vertical-align: calc(var(--bullet-raise) - 3px); border: 1px solid var(--text-muted); transform: rotate(45deg); transition: border-color 0.4s ease; }
         .collection li a { color: var(--accent-color); font-weight: 500; text-decoration: none; transition: color 0.4s ease; }
         .collection li a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
         .collection li.group-label { color: var(--text-muted); }
@@ -155,10 +166,21 @@
         }
     </style>
     <script>
-        // Applied before the body exists so the page arrives in the right theme, hidden, then fades in
+        // Applied before the body exists so the page arrives in the right theme and font, hidden, then fades in
         (function () {
+            function applyBemboEarly() {
+                document.documentElement.classList.add('font-bembo');
+                ['et-book-roman-line-figures', 'et-book-display-italic-old-style-figures', 'et-book-semi-bold-old-style-figures'].forEach(name => {
+                    const link = document.createElement('link');
+                    link.rel = 'preload'; link.as = 'font'; link.type = 'font/woff'; link.crossOrigin = 'anonymous';
+                    link.href = `fonts/et-book/${name}.woff`;
+                    document.head.appendChild(link);
+                });
+            }
             const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
-            const theme = new URLSearchParams(location.search).get('theme');
+            const params = new URLSearchParams(location.search);
+            if (params.get('font') === 'bembo') applyBemboEarly();
+            const theme = params.get('theme');
             window.initialTheme = colours[theme] ? theme : 'midnight-blue';
             document.documentElement.classList.add('page-enter');
             document.documentElement.style.backgroundColor = colours[window.initialTheme];
@@ -180,7 +202,7 @@
                 <line x1="12" y1="16" x2="12" y2="12"></line>
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <div class="theme-tooltip">click or (t) to toggle themes</div>
+            <div class="theme-tooltip">click or (t) to toggle themes &middot; (f) to toggle fonts</div>
         </div>
     </div>
 
@@ -263,6 +285,22 @@
             }
         });
 
+        // --- Font toggle (f): Cormorant Garamond <-> ET Bembo ---
+        // The new faces are loaded before switching so the text never flashes in a fallback font
+        function setFont(bembo) {
+            document.documentElement.classList.toggle('font-bembo', bembo);
+            updateProgress();
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() !== 'f' || e.ctrlKey || e.metaKey || e.altKey) return;
+            const toBembo = !document.documentElement.classList.contains('font-bembo');
+            const ready = toBembo && document.fonts
+                ? Promise.all(['400 1em "ET Bembo"', 'italic 400 1em "ET Bembo"', '600 1em "ET Bembo"'].map(f => document.fonts.load(f))).catch(() => {})
+                : Promise.resolve();
+            ready.then(() => setFont(toBembo));
+        });
+
+
         // --- Page transitions ---
         let revealed = false;
         function revealPage() {
@@ -275,10 +313,13 @@
         }
         setTimeout(revealPage, 800);
 
-        // Tell the main page to skip its loading screen (and keep this theme) when we go back to it,
+        // Tell the main page to skip its loading screen (and keep this theme and font) when we go back to it,
         // whether by the back link or the browser's back button
         window.addEventListener('pagehide', () => {
-            try { sessionStorage.setItem('mr-return-from-all-writings', themes[currentThemeIndex]); } catch (e) {}
+            try {
+                sessionStorage.setItem('mr-return-from-all-writings', themes[currentThemeIndex]);
+                sessionStorage.setItem('mr-return-font-from-all-writings', document.documentElement.classList.contains('font-bembo') ? 'bembo' : 'cormorant');
+            } catch (e) {}
         });
 
         // Restored from the back/forward cache after fading out: show the page again

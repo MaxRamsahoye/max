@@ -11,6 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
+        /* Second typeface (toggle with f): ET Bembo, self-hosted from fonts/et-book (MIT licence) */
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-roman-line-figures.woff') format('woff'); font-weight: 300 500; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-display-italic-old-style-figures.woff') format('woff'); font-weight: 300 500; font-style: italic; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-semi-bold-old-style-figures.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-bold-line-figures.woff') format('woff'); font-weight: 700 900; font-style: normal; font-display: swap; }
+        :root { --font-body: 'Cormorant Garamond', serif; }
+        html.font-bembo { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
+
         :root {
             --bg-color: #0a0e1f;
             --text-main: #d8dbe8;
@@ -75,7 +83,7 @@
 
         body {
             background-color: var(--bg-color);
-            font-family: 'Cormorant Garamond', serif;
+            font-family: var(--font-body);
             color: var(--text-main);
             line-height: 1.5;
             overflow-x: hidden;
@@ -316,13 +324,25 @@
         // Coming back from the All Writings page: skip the loading screen, keep its theme and fade in instead.
         // Runs before the body exists so nothing (loader, wrong theme) can flash first.
         (function () {
-            let theme = null;
+            function applyBemboEarly() {
+                document.documentElement.classList.add('font-bembo');
+                ['et-book-roman-line-figures', 'et-book-display-italic-old-style-figures', 'et-book-semi-bold-old-style-figures'].forEach(name => {
+                    const link = document.createElement('link');
+                    link.rel = 'preload'; link.as = 'font'; link.type = 'font/woff'; link.crossOrigin = 'anonymous';
+                    link.href = `fonts/et-book/${name}.woff`;
+                    document.head.appendChild(link);
+                });
+            }
+            let theme = null, font = null;
             try {
                 theme = sessionStorage.getItem('mr-return-from-all-writings');
+                font = sessionStorage.getItem('mr-return-font-from-all-writings');
                 sessionStorage.removeItem('mr-return-from-all-writings');
+                sessionStorage.removeItem('mr-return-font-from-all-writings');
             } catch (e) {}
             const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
             if (!colours[theme]) return;
+            if (font === 'bembo') applyBemboEarly();
             window.returnTheme = theme;
             document.documentElement.classList.add('skip-loader', 'page-enter');
             document.documentElement.style.backgroundColor = colours[theme];
@@ -366,7 +386,7 @@
                     <line x1="12" y1="16" x2="12" y2="12"></line>
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
-                <div class="theme-tooltip">click or (t) to toggle themes</div>
+                <div class="theme-tooltip">click or (t) to toggle themes &middot; (f) to toggle fonts</div>
             </div>
         </div>
     </div>
@@ -1127,6 +1147,21 @@
             }
         });
 
+        // --- Font toggle (f): Cormorant Garamond <-> ET Bembo ---
+        // The new faces are loaded before switching so the text never flashes in a fallback font
+        function setFont(bembo) {
+            document.documentElement.classList.toggle('font-bembo', bembo);
+            syncDividerWidth();
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() !== 'f' || e.ctrlKey || e.metaKey || e.altKey) return;
+            const toBembo = !document.documentElement.classList.contains('font-bembo');
+            const ready = toBembo && document.fonts
+                ? Promise.all(['400 1em "ET Bembo"', 'italic 400 1em "ET Bembo"', '600 1em "ET Bembo"'].map(f => document.fonts.load(f))).catch(() => {})
+                : Promise.resolve();
+            ready.then(() => setFont(toBembo));
+        });
+
         // --- Page transitions to/from the All Writings page ---
         if (themes.includes(window.returnTheme)) {
             setTheme(window.returnTheme, true);
@@ -1136,10 +1171,13 @@
             }));
         }
 
-        // Fade out, then go to All Writings carrying the current theme
+        // Fade out, then go to All Writings carrying the current theme and font
         document.getElementById('all-writings-link').addEventListener('click', (e) => {
             const theme = themes[currentThemeIndex];
-            e.currentTarget.href = theme === 'midnight-blue' ? 'all-writings.html' : `all-writings.html?theme=${theme}`;
+            const params = new URLSearchParams();
+            if (theme !== 'midnight-blue') params.set('theme', theme);
+            if (document.documentElement.classList.contains('font-bembo')) params.set('font', 'bembo');
+            e.currentTarget.href = 'all-writings.html' + (params.toString() ? `?${params}` : '');
             if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
             e.preventDefault();
             const href = e.currentTarget.href;
@@ -1151,7 +1189,10 @@
         window.addEventListener('pageshow', (e) => {
             if (!e.persisted) return;
             document.body.classList.remove('page-hidden');
-            try { sessionStorage.removeItem('mr-return-from-all-writings'); } catch (err) {}
+            try {
+                sessionStorage.removeItem('mr-return-from-all-writings');
+                sessionStorage.removeItem('mr-return-font-from-all-writings');
+            } catch (err) {}
         });
 
         // --- Scroll Progress Bar & Back-to-Top Button Logic ---
