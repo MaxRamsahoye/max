@@ -189,6 +189,10 @@
         .social-icon-link { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-main); opacity: 0.75; text-decoration: none; transition: opacity 0.3s ease, color 0.4s ease; }
         .social-icon-link:hover { opacity: 1; color: var(--accent-color); }
         .social-icon-link svg { width: 18px; height: 18px; }
+        /* Email: a button that copies the address, with a small label like the theme tooltip */
+        .copy-email-btn { position: relative; background: none; border: none; padding: 0; font: inherit; cursor: pointer; }
+        .copy-email-tooltip { position: absolute; top: 100%; left: 50%; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: var(--fw-600); white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-50%, -5px); transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; pointer-events: none; }
+        .copy-email-btn:hover .copy-email-tooltip, .copy-email-btn.copied .copy-email-tooltip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
 
         /* Theme Switcher */
         #theme-switcher-wrapper { display: flex; align-items: center; gap: 15px; pointer-events: none; }
@@ -376,6 +380,10 @@
 
     <div id="top-right-bar">
         <div id="social-bar">
+            <button type="button" id="copy-email-btn" class="social-icon-link copy-email-btn interactive-element" data-email="maxjosephholly@outlook.com" aria-label="Copy email address (maxjosephholly@outlook.com)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span class="copy-email-tooltip" aria-live="polite">click to copy email</span>
+            </button>
             <a href="https://www.linkedin.com/in/max-ramsahoye/" target="_blank" class="social-icon-link interactive-element" aria-label="LinkedIn" title="LinkedIn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
             </a>
@@ -1278,6 +1286,35 @@
                 sessionStorage.removeItem('mr-return-from-all-writings');
                 sessionStorage.removeItem('mr-return-font-from-all-writings');
             } catch (err) {}
+        });
+
+        // --- Copy email address (top-right envelope) ---
+        const copyEmailBtn = document.getElementById('copy-email-btn');
+        const copyEmailTip = copyEmailBtn.querySelector('.copy-email-tooltip');
+        let copyEmailTimer;
+        function copyText(text) {
+            if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+            // Fallback for browsers/contexts without the Clipboard API
+            return new Promise((resolve, reject) => {
+                const area = document.createElement('textarea');
+                area.value = text; area.setAttribute('readonly', ''); area.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+                document.body.appendChild(area); area.select();
+                try { document.execCommand('copy') ? resolve() : reject(); } catch (err) { reject(err); } finally { area.remove(); }
+            });
+        }
+        copyEmailBtn.addEventListener('click', () => {
+            const email = copyEmailBtn.dataset.email;
+            copyText(email)
+                .then(() => { copyEmailTip.textContent = 'email copied'; })
+                .catch(() => { copyEmailTip.textContent = email; })
+                .finally(() => {
+                    copyEmailBtn.classList.add('copied');
+                    clearTimeout(copyEmailTimer);
+                    copyEmailTimer = setTimeout(() => {
+                        copyEmailBtn.classList.remove('copied');
+                        copyEmailTip.textContent = 'click to copy email';
+                    }, 1800);
+                });
         });
 
         // --- Scroll Progress Bar & Back-to-Top Button Logic ---
