@@ -1156,10 +1156,11 @@
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() !== 'f' || e.ctrlKey || e.metaKey || e.altKey) return;
             const toBembo = !document.documentElement.classList.contains('font-bembo');
-            const ready = toBembo && document.fonts
+            // Waits at most 800ms for the download, so the switch always happens even if a browser never reports it loaded
+            const fontsLoaded = toBembo && document.fonts
                 ? Promise.all(['400 1em "ET Bembo"', 'italic 400 1em "ET Bembo"', '600 1em "ET Bembo"'].map(f => document.fonts.load(f))).catch(() => {})
                 : Promise.resolve();
-            ready.then(() => setFont(toBembo));
+            Promise.race([fontsLoaded, new Promise(resolve => setTimeout(resolve, 800))]).then(() => setFont(toBembo));
         });
 
         // --- Page transitions to/from the All Writings page ---
