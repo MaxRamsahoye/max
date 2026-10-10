@@ -9,7 +9,7 @@
     <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 font-family=%22Georgia, serif%22 font-weight=%22bold%22 fill=%22%23ffffff%22>M</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -119,15 +119,15 @@
 
         .collection h3 { font-size: 1.35rem; font-style: italic; font-weight: 400; color: var(--text-muted); margin: 32px 0 6px 37px; }
 
-        .collection ul { list-style: none; margin-top: 14px; padding-left: 37px; }
+        .collection ul { list-style: none; margin-top: 14px; padding-left: 63px; }
         .collection li { position: relative; font-size: 1.45rem; padding: 9px 0; }
         /* Diamond outline bullets, hung in the left gutter so titles stay aligned with the heading */
         /* Inline so it sits on the text's own baseline: its centre is raised half the cap height (0.32em) above the baseline,
            lining up with the middle of the capitals at any font size. The margins hang it 20px into the gutter without
            moving the text (-20 + 6 + 14 = 0). */
         .collection li::before { content: ''; display: inline-block; box-sizing: border-box; width: 6px; height: 6px; margin: 0 14px 0 -20px; vertical-align: calc(0.32em - 3px); border: 1px solid var(--text-muted); transform: rotate(45deg); transition: border-color 0.4s ease; }
-        .collection li a { color: var(--text-main); text-decoration: none; transition: color 0.3s ease; }
-        .collection li a:hover { color: var(--accent-color); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+        .collection li a { color: var(--accent-color); font-weight: 500; text-decoration: none; transition: color 0.4s ease; }
+        .collection li a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
         .collection li.group-label { color: var(--text-muted); }
         .collection li.nested { padding-left: 24px; }
 
@@ -144,8 +144,8 @@
             #top-right-bar { top: 20px; right: 20px; }
             h1 { font-size: 2.4rem; }
             .collection h2 { font-size: 1.45rem; gap: 10px; }
-            .collection h3 { margin-left: 20px; font-size: 1.25rem; }
-            .collection ul { padding-left: 20px; }
+            .collection h3 { margin-left: 32px; font-size: 1.25rem; }
+            .collection ul { padding-left: 52px; }
             .collection li { font-size: 1.3rem; }
             .filters { gap: 6px 18px; }
             .filter-tail { gap: 18px; }
