@@ -9,21 +9,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <!-- ET Bembo is the default typeface: fetch it straight away -->
+    <link rel="preload" href="fonts/et-book/et-book-roman-line-figures.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="fonts/et-book/et-book-display-italic-old-style-figures.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="fonts/et-book/et-book-semi-bold-old-style-figures.woff" as="font" type="font/woff" crossorigin>
     
     <style>
-        /* Second typeface (toggle with f): ET Bembo, self-hosted from fonts/et-book (MIT licence) */
+        /* Default typeface: ET Bembo, self-hosted from fonts/et-book (MIT licence). f switches to Cormorant Garamond. */
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-roman-line-figures.woff') format('woff'); font-weight: 300 500; font-style: normal; font-display: swap; }
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-display-italic-old-style-figures.woff') format('woff'); font-weight: 300 500; font-style: italic; font-display: swap; }
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-semi-bold-old-style-figures.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-bold-line-figures.woff') format('woff'); font-weight: 700 900; font-style: normal; font-display: swap; }
-        :root { --font-body: 'Cormorant Garamond', serif; }
-        html.font-bembo { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
+        :root { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
+        html.font-cormorant { --font-body: 'Cormorant Garamond', serif; }
         /* Font weights go through these so Cormorant Garamond (which reads thin) is set one weight heavier
            than written, while ET Bembo keeps the weights as written. Cormorant's heaviest weight is 700. */
-        :root { --fw-300: 400; --fw-400: 500; --fw-500: 600; --fw-600: 700; --fw-700: 700; }
-        html.font-bembo { --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600; --fw-700: 700; }
+        :root { --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600; --fw-700: 700; }
+        html.font-cormorant { --fw-300: 400; --fw-400: 500; --fw-500: 600; --fw-600: 700; --fw-700: 700; }
         body { font-weight: var(--fw-400); }
         h1, h2, h3, h4, h5, h6, strong, b { font-weight: var(--fw-700); }
+        /* Avoid a single word left alone on the last line of titles and paragraphs (Chrome, Edge, Safari) */
+        h1, h2, h3, p, li { text-wrap: pretty; }
 
         :root {
             --bg-color: #0a0e1f;
@@ -283,8 +289,12 @@
         .project-section-break { align-self: center; color: var(--border-color); font-size: 1.2rem; letter-spacing: 6px; margin-bottom: 30px; transition: color 0.4s ease; }
         .project-section-title { font-size: 1.4rem; font-weight: var(--fw-600); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0; transition: color 0.4s ease; }
         
-        .project-list p.project-quote { font-size: 1.15rem; font-style: italic; color: var(--text-muted); margin-bottom: 8px; margin-top: 0; padding-right: 180px; }
-        .project-title-wrapper { display: flex; align-items: flex-start; margin-bottom: 8px; padding-right: 180px; }
+        .project-list p.project-quote { font-size: 1.15rem; font-style: italic; color: var(--text-muted); margin-bottom: 8px; margin-top: 0; }
+        .project-title-wrapper { display: flex; align-items: flex-start; margin-bottom: 8px; }
+        /* Badges sit at the top right of an entry, so only the line beside them (the first one after the badges)
+           keeps clear of them; every other title and quote uses the full width of the column */
+        .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote { padding-right: 156px; }
+        .project-list .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper, .project-list .badges-container:not(:has(.badge + .badge)) + p.project-quote { padding-right: 104px; }
         .project-link-title { text-decoration: none; color: inherit; }
         .project-link-title h3 { font-size: 1.6rem; font-weight: var(--fw-600); color: var(--accent-color); margin-bottom: 0; transition: opacity 0.3s ease, transform 0.3s ease, color 0.4s ease; line-height: 1.3; }
         .project-link-title:hover h3 { transform: translateX(5px); opacity: 0.7; }
@@ -306,11 +316,10 @@
         #mediums .project-link-title h3 { font-size: 2rem; }
         #mediums .project-list p { font-size: 1.35rem; }
         #artifacts .project-title-wrapper { padding-right: 0; }
-        #tab14 .project-list p { padding-right: 180px; }
 
         @media (max-width: 800px) {
             #subtab-paragons .project-list, .projects-columns { grid-template-columns: 1fr; gap: 0; }
-            .project-title-wrapper, .project-list p.project-quote, #tab14 .project-list p { padding-right: 0; }
+            .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote { padding-right: 0; }
             .badges-container { position: relative; top: 0; margin-bottom: 10px; }
         }
 
@@ -330,15 +339,7 @@
         // Coming back from the All Writings page: skip the loading screen, keep its theme and fade in instead.
         // Runs before the body exists so nothing (loader, wrong theme) can flash first.
         (function () {
-            function applyBemboEarly() {
-                document.documentElement.classList.add('font-bembo');
-                ['et-book-roman-line-figures', 'et-book-display-italic-old-style-figures', 'et-book-semi-bold-old-style-figures'].forEach(name => {
-                    const link = document.createElement('link');
-                    link.rel = 'preload'; link.as = 'font'; link.type = 'font/woff'; link.crossOrigin = 'anonymous';
-                    link.href = `fonts/et-book/${name}.woff`;
-                    document.head.appendChild(link);
-                });
-            }
+            const applyCormorantEarly = () => document.documentElement.classList.add('font-cormorant');
             let theme = null, font = null;
             try {
                 theme = sessionStorage.getItem('mr-return-from-all-writings');
@@ -348,7 +349,7 @@
             } catch (e) {}
             const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
             if (!colours[theme]) return;
-            if (font === 'bembo') applyBemboEarly();
+            if (font === 'cormorant') applyCormorantEarly();
             window.returnTheme = theme;
             document.documentElement.classList.add('skip-loader', 'page-enter');
             document.documentElement.style.backgroundColor = colours[theme];
@@ -1153,20 +1154,46 @@
             }
         });
 
-        // --- Font toggle (f): Cormorant Garamond <-> ET Bembo ---
+        // --- Keep the last two words of titles and paragraphs together ---
+        // Swaps the final space for a non-breaking one, so a single word is never left alone on the last line
+        // (works in every browser; text-wrap: pretty in the CSS refines the rest of the wrap where supported)
+        function bindLastWords(root) {
+            root.querySelectorAll('h1, h2, h3, p, .collection li a').forEach(el => {
+                const nodes = [];
+                const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+                let n; while ((n = walker.nextNode())) nodes.push(n);
+                // walk back from the end: skip trailing spaces and the last word, then replace the space before it
+                let seenWord = false;
+                for (let i = nodes.length - 1; i >= 0; i--) {
+                    const t = nodes[i].textContent;
+                    for (let j = t.length - 1; j >= 0; j--) {
+                        if (/\s/.test(t[j])) {
+                            if (!seenWord) continue;
+                            if (t[j] === '\u00a0') return;
+                            nodes[i].textContent = t.slice(0, j) + '\u00a0' + t.slice(j + 1);
+                            return;
+                        }
+                        seenWord = true;
+                    }
+                }
+            });
+        }
+        bindLastWords(document);
+
+        // --- Font toggle (f): ET Bembo (default) <-> Cormorant Garamond ---
         // The new faces are loaded before switching so the text never flashes in a fallback font
-        function setFont(bembo) {
-            document.documentElement.classList.toggle('font-bembo', bembo);
+        function setFont(cormorant) {
+            document.documentElement.classList.toggle('font-cormorant', cormorant);
             syncDividerWidth();
         }
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() !== 'f' || e.ctrlKey || e.metaKey || e.altKey) return;
-            const toBembo = !document.documentElement.classList.contains('font-bembo');
+            const toCormorant = !document.documentElement.classList.contains('font-cormorant');
             // Waits at most 800ms for the download, so the switch always happens even if a browser never reports it loaded
-            const fontsLoaded = toBembo && document.fonts
-                ? Promise.all(['400 1em "ET Bembo"', 'italic 400 1em "ET Bembo"', '600 1em "ET Bembo"'].map(f => document.fonts.load(f))).catch(() => {})
+            const fontsLoaded = toCormorant && document.fonts
+                ? Promise.all(['500 1em "Cormorant Garamond"', 'italic 500 1em "Cormorant Garamond"', '700 1em "Cormorant Garamond"'].map(f => document.fonts.load(f))).catch(() => {})
                 : Promise.resolve();
-            Promise.race([fontsLoaded, new Promise(resolve => setTimeout(resolve, 800))]).then(() => setFont(toBembo));
+            Promise.race([fontsLoaded, new Promise(resolve => setTimeout(resolve, 800))]).then(() => setFont(toCormorant));
         });
 
         // --- Page transitions to/from the All Writings page ---
@@ -1183,7 +1210,7 @@
             const theme = themes[currentThemeIndex];
             const params = new URLSearchParams();
             if (theme !== 'midnight-blue') params.set('theme', theme);
-            if (document.documentElement.classList.contains('font-bembo')) params.set('font', 'bembo');
+            if (document.documentElement.classList.contains('font-cormorant')) params.set('font', 'cormorant');
             e.currentTarget.href = 'all-writings.html' + (params.toString() ? `?${params}` : '');
             if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
             e.preventDefault();
