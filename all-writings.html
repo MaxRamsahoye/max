@@ -33,11 +33,11 @@
         h1, h2, h3, p, li { text-wrap: pretty; }
 
         :root {
-            --bg-color: #0a0e1f;
+            --bg-color: #0d1330;
             --text-main: #f1f3fa;
             --accent-color: #ffffff;
             --text-muted: #767c99;
-            --border-color: #1a1f38;
+            --border-color: #1d2449;
         }
 
         body.theme-dark {
@@ -181,7 +181,7 @@
         // Applied before the body exists so the page arrives in the right theme and font, hidden, then fades in
         (function () {
             const applyCormorantEarly = () => document.documentElement.classList.add('font-cormorant');
-            const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
+            const colours = { 'midnight-blue': '#0d1330', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
             const params = new URLSearchParams(location.search);
             if (params.get('font') === 'cormorant') applyCormorantEarly();
             const theme = params.get('theme');
@@ -199,7 +199,7 @@
     <div id="progress-bar-track" aria-hidden="true"><div id="progress-bar"></div></div>
 
     <div id="top-right-bar">
-        <button id="theme-toggle-btn" class="theme-btn" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+        <button id="theme-toggle-btn" class="theme-btn" style="background-color: #0d1330;" aria-label="Toggle Theme" title="Toggle Theme"></button>
         <div class="theme-info-container">
             <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -227,7 +227,7 @@
         // --- Theme (carried over from the main page via ?theme=, 't' cycles) ---
         const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
         const themeSwatchColors = {
-            'midnight-blue': '#0a0e1f',
+            'midnight-blue': '#0d1330',
             'dark': '#1a1c23',
             'light': '#f4ecd8',
             'pure-white': '#ffffff',

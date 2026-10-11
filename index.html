@@ -32,11 +32,11 @@
         h1, h2, h3, p, li { text-wrap: pretty; }
 
         :root {
-            --bg-color: #0a0e1f;
+            --bg-color: #0d1330;
             --text-main: #f1f3fa;
             --accent-color: #ffffff;
             --text-muted: #767c99;
-            --border-color: #1a1f38;
+            --border-color: #1d2449;
             --cursor-dot: #ffffff;
             --cursor-outline: rgba(255, 255, 255, 0.5);
             --cursor-hover: rgba(255, 255, 255, 0.15);
@@ -351,7 +351,7 @@
                 sessionStorage.removeItem('mr-return-from-all-writings');
                 sessionStorage.removeItem('mr-return-font-from-all-writings');
             } catch (e) {}
-            const colours = { 'midnight-blue': '#0a0e1f', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
+            const colours = { 'midnight-blue': '#0d1330', 'dark': '#1a1c23', 'light': '#f4ecd8', 'pure-white': '#ffffff', 'pure-black': '#000000' };
             if (!colours[theme]) return;
             if (font === 'cormorant') applyCormorantEarly();
             window.returnTheme = theme;
@@ -393,7 +393,7 @@
         </div>
         <div id="theme-switcher-wrapper">
             <div id="theme-switcher">
-                <button id="theme-toggle-btn" class="theme-btn interactive-element" style="background-color: #0a0e1f;" aria-label="Toggle Theme" title="Toggle Theme"></button>
+                <button id="theme-toggle-btn" class="theme-btn interactive-element" style="background-color: #0d1330;" aria-label="Toggle Theme" title="Toggle Theme"></button>
             </div>
             <div class="theme-info-container interactive-element">
                 <svg class="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1171,7 +1171,7 @@
         // --- Theme Switcher Logic ---
         const themes = ['midnight-blue', 'dark', 'light', 'pure-white', 'pure-black'];
         const themeSwatchColors = {
-            'midnight-blue': '#0a0e1f',
+            'midnight-blue': '#0d1330',
             'dark': '#1a1c23',
             'light': '#f4ecd8',
             'pure-white': '#ffffff',
