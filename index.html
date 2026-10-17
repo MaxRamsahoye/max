@@ -331,10 +331,13 @@
         #mediums .project-link-title h3 { font-size: 2rem; }
         #mediums .project-list p { font-size: 1.35rem; }
         #artifacts .project-title-wrapper { padding-right: 0; }
+        #artifacts .badges-container + .project-title-wrapper { padding-right: 156px; }
+        #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 104px; }
 
         @media (max-width: 800px) {
             #subtab-paragons .project-list, .projects-columns { grid-template-columns: 1fr; gap: 0; }
-            .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote { padding-right: 0; }
+            .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote,
+            #artifacts .badges-container + .project-title-wrapper, #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 0; }
             .badges-container { position: relative; top: 0; margin-bottom: 10px; }
         }
 
@@ -495,7 +498,7 @@
                 <h2><a href="#artifacts" class="interactive-element section-heading-link">Artifacts</a></h2>
                 <p class="section-sub">Specially designed digital pages.</p>
                 <ul class="project-list">
-                    <li><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/technologicaltransitions.agency/" target="_blank" class="project-link-title interactive-element"><h3>A Multi-Agent Model of Major Technological Transitions</h3></a></div></li>
+                    <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/technologicaltransitions.agency/" target="_blank" class="project-link-title interactive-element"><h3>A Multi-Agent Model of Major Technological Transitions</h3></a></div></li>
                     <li><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/infrastructuralgaianism/" target="_blank" class="project-link-title interactive-element"><h3>Infrastructural Gainism & Decentralised Civilisation Design: From Fresco’s <em>City-Systems</em> to Hall’s <em>Civium</em></h3></a></div></li>
                     <li><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/mechanicsofmetautopia.ai/" target="_blank" class="project-link-title interactive-element"><h3>The Mechanics of Meta-Utopia?: Civilisation Design for Desirable Multi-Cultural Equilibria</h3></a></div></li>
                 </ul>
@@ -543,7 +546,7 @@
                             <p>recent research articles on civilisation</p>
                         </div>
                         <ul class="project-list">
-                            <li><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1kYkfewkdzPgwFZsIxQ5-qsRimFZmWP6xTO5YnSWnuno/edit?usp=sharing&amp;rm=minimal" target="_blank" class="project-link-title interactive-element"><h3>A Multi-Agent Model of Major Technological Transitions</h3></a></div><p>The civilisation-wide diffusion of a new tech stack is not predetermined by competitive pressures, but is enacted by the technocratic elite’s response to them</p></li>
+                            <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://docs.google.com/document/d/1kYkfewkdzPgwFZsIxQ5-qsRimFZmWP6xTO5YnSWnuno/edit?usp=sharing&amp;rm=minimal" target="_blank" class="project-link-title interactive-element"><h3>A Multi-Agent Model of Major Technological Transitions</h3></a></div><p>The civilisation-wide diffusion of a new tech stack is not predetermined by competitive pressures, but is enacted by the technocratic elite’s response to them</p></li>
                         </ul>
                     </div>
 
