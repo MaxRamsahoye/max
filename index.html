@@ -185,10 +185,13 @@
 
         /* Menus */
         .nav-links { position: absolute; top: 25px; left: 25px; display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 30px; z-index: 1000; pointer-events: auto; }
-        .nav-links a { text-decoration: none; color: var(--text-main); font-size: 1.15rem; font-weight: var(--fw-600); padding-bottom: 2px; position: relative; transition: color 0.2s ease; }
-        .nav-links a::after { content: ''; position: absolute; width: 0; height: 1.5px; bottom: 0; left: 0; background-color: var(--accent-color); transition: width 0.2s ease, background-color 0.4s ease; }
-        .nav-links a:hover { color: var(--text-main); }
-        .nav-links a:hover::after { width: 100%; }
+        .nav-links a, .hero-nav a { text-decoration: none; color: var(--text-main); font-size: 1.15rem; font-weight: var(--fw-600); padding-bottom: 2px; position: relative; transition: color 0.2s ease; }
+        .nav-links a::after, .hero-nav a::after { content: ''; position: absolute; width: 0; height: 1.5px; bottom: 0; left: 0; background-color: var(--accent-color); transition: width 0.2s ease, background-color 0.4s ease; }
+        .nav-links a:hover, .hero-nav a:hover { color: var(--text-main); }
+        .nav-links a:hover::after, .hero-nav a:hover::after { width: 100%; }
+        /* The same section links repeated under the in-page bar, centred */
+        .hero-nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 30px; margin-top: 32px; }
+        @media (max-width: 800px) { .hero-nav { gap: 10px 20px; } }
 
         @media (max-width: 800px) { .nav-links { left: 50%; transform: translateX(-50%); gap: 20px; } }
 
@@ -213,6 +216,8 @@
         .hero-bar .theme-switcher { position: static; }
         .hero-bar .theme-tooltip { right: auto; left: 50%; transform: translate(-50%, -5px); }
         .hero-bar .theme-switcher:hover .theme-tooltip { transform: translate(-50%, 0); }
+        /* Hover notes in the bar sit above the section links underneath it */
+        .hero-bar .theme-tooltip, .hero-bar .copy-email-tooltip { z-index: 20; }
         .copy-email-btn { position: relative; background: none; border: none; padding: 0; font: inherit; cursor: pointer; }
         .copy-email-tooltip { position: absolute; top: 100%; left: 50%; margin-top: 12px; background-color: var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-size: 0.95rem; font-weight: var(--fw-600); white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-50%, -5px); transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; pointer-events: none; }
         .copy-email-btn:hover .copy-email-tooltip, .copy-email-btn.copied .copy-email-tooltip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
@@ -493,6 +498,15 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Same section links as the top-left menu, repeated under the bar -->
+                    <nav class="hero-nav" aria-label="Sections">
+                        <a href="#home" class="interactive-element">About</a>
+                        <a href="#mediums" class="interactive-element">Mediums</a>
+                        <a href="#artifacts" class="interactive-element">Artifacts</a>
+                        <a href="#writings" class="interactive-element">Writings</a>
+                        <a href="#projects" class="interactive-element">Projects</a>
+                        <a href="#contact" class="interactive-element">Contact</a>
+                    </nav>
                 </div>
             </div>
         </header>
