@@ -203,7 +203,18 @@
         .hero-nav a { font-size: 1.4rem; }
         @media (max-width: 800px) { .hero-nav { gap: 10px 22px; } .hero-nav a { font-size: 1.25rem; } }
 
-        @media (max-width: 800px) { .nav-links { left: 50%; transform: translateX(-50%); gap: 20px; } }
+        /* Phones and narrow tablets: the icon bar gets its own centred row at the top, and the section menu sits
+           centred beneath it, wrapping onto two rows if needed, so the two never overlap or run off screen */
+        @media (max-width: 800px) {
+            #top-right-bar { top: 16px; left: 16px; right: 16px; justify-content: center; }
+            .nav-links { top: 62px; left: 16px; right: 16px; transform: none; flex-wrap: wrap; justify-content: center; gap: 6px 22px; }
+            /* the swatch note is centred under the whole bar so it stays on screen */
+            #top-right-bar #theme-switcher { position: static; }
+            #top-right-bar .theme-tooltip { right: auto; left: 50%; transform: translate(-50%, -5px); }
+            #top-right-bar #theme-switcher:hover .theme-tooltip { transform: translate(-50%, 0); }
+            /* the decorative ring is a little smaller and sits below the menu rather than behind it */
+            .astrolabe { top: max(50%, 212px); transform: scale(0.7); }
+        }
 
         /* Top Right Bar (social icons + theme switcher) */
         #top-right-bar { position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 20px; z-index: 99999; pointer-events: none; opacity: 1; visibility: visible; transition: opacity 0.8s ease, visibility 0.8s ease; }
@@ -347,7 +358,8 @@
         #subtab-paragons .project-list li { border-bottom: none; padding: 15px 0; }
         #subtab-paragons .project-title-wrapper { padding-right: 0; }
         
-        .projects-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 30px; width: 100%; }
+        .projects-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 60px; margin-top: 30px; width: 100%; }
+        .projects-columns > div { min-width: 0; }
         #projects .project-list { max-width: 100%; margin: 0; }
         .projects-columns .project-list li { padding: 20px 0; border-bottom: 1px solid var(--border-color); }
         .projects-columns .project-list li:last-child { border-bottom: none; }
@@ -362,10 +374,19 @@
         #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 104px; }
 
         @media (max-width: 800px) {
-            #subtab-paragons .project-list, .projects-columns { grid-template-columns: 1fr; gap: 0; }
+            #subtab-paragons .project-list, .projects-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
+            .projects-columns .project-title-wrapper { padding-right: 0; }
+            .email-link { font-size: 1.5rem; overflow-wrap: anywhere; }
+            /* the name always starts below the (smaller, lower) decorative ring, even on short phones */
+            .content-wrapper { padding-top: max(35vh, 304px); }
             .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote,
             #artifacts .badges-container + .project-title-wrapper, #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 0; }
             .badges-container { position: relative; top: 0; margin-bottom: 10px; }
+        }
+        /* Very narrow phones: long collection names in the Writings menu may wrap instead of running off screen */
+        @media (max-width: 480px) {
+            .tab-btn { max-width: 100%; }
+            .tab-title-text { white-space: normal; }
         }
 
         /* Direct Email Contact */
@@ -1289,6 +1310,9 @@
                 const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
                 let n; while ((n = walker.nextNode())) nodes.push(n);
                 // walk back from the end: skip trailing spaces and the last word, then replace the space before it
+                // only when the last two words are short enough to always fit on one line, even on a phone
+                const lastTwo = el.textContent.trim().split(/\s+/).slice(-2).join(' ');
+                if (lastTwo.length > 22) return;
                 let seenWord = false;
                 for (let i = nodes.length - 1; i >= 0; i--) {
                     const t = nodes[i].textContent;

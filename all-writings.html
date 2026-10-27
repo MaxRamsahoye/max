@@ -311,6 +311,9 @@
                 const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
                 let n; while ((n = walker.nextNode())) nodes.push(n);
                 // walk back from the end: skip trailing spaces and the last word, then replace the space before it
+                // only when the last two words are short enough to always fit on one line, even on a phone
+                const lastTwo = el.textContent.trim().split(/\s+/).slice(-2).join(' ');
+                if (lastTwo.length > 22) return;
                 let seenWord = false;
                 for (let i = nodes.length - 1; i >= 0; i--) {
                     const t = nodes[i].textContent;
