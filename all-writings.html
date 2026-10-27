@@ -33,11 +33,14 @@
     <style>
         /* Default typeface: ET Bembo, self-hosted from fonts/et-book (MIT licence). f switches to Cormorant Garamond. */
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-roman-line-figures.woff') format('woff'); font-weight: 300 500; font-style: normal; font-display: swap; }
-        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-display-italic-old-style-figures.woff') format('woff'); font-weight: 300 500; font-style: italic; font-display: swap; }
+        @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-display-italic-old-style-figures.woff') format('woff'); font-weight: 300 900; font-style: italic; font-display: swap; }
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-semi-bold-old-style-figures.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
         @font-face { font-family: 'ET Bembo'; src: url('fonts/et-book/et-book-bold-line-figures.woff') format('woff'); font-weight: 700 900; font-style: normal; font-display: swap; }
         :root { --font-body: 'ET Bembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif; }
         html.font-cormorant { --font-body: 'Cormorant Garamond', serif; }
+        /* ET Bembo has one italic: use it for bold-italic text too, and never let the browser fake a bold or italic
+           (faked bold italics are what looked smeared on phones) */
+        html { font-synthesis: none; }
         /* Font weights go through these so Cormorant Garamond (which reads thin) is set one weight heavier
            than written, while ET Bembo keeps the weights as written. Cormorant's heaviest weight is 700. */
         :root { --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600; --fw-700: 700; }
