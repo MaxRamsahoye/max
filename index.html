@@ -365,14 +365,14 @@
         .projects-columns .project-list li:last-child { border-bottom: none; }
         .projects-columns .project-title-wrapper { padding-right: 120px; }
 
-        #artifacts .project-list, #major-projects .project-list { width: fit-content; max-width: 100%; margin: 0 auto; }
-        #major-projects > h2 { margin-bottom: 40px; }
+        #artifacts .project-list, #projects-in-progress .project-list { width: fit-content; max-width: 100%; margin: 0 auto; }
+        #projects-in-progress > h2 { margin-bottom: 40px; }
         #mediums .project-list { width: fit-content; max-width: 100%; margin: 0 auto; }
         #mediums .project-link-title h3 { font-size: 2rem; }
         #mediums .project-list p { font-size: 1.35rem; }
-        #artifacts .project-title-wrapper, #major-projects .project-title-wrapper { padding-right: 0; }
-        #artifacts .badges-container + .project-title-wrapper, #major-projects .badges-container + .project-title-wrapper { padding-right: 156px; }
-        #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper, #major-projects .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 104px; }
+        #artifacts .project-title-wrapper, #projects-in-progress .project-title-wrapper { padding-right: 0; }
+        #artifacts .badges-container + .project-title-wrapper, #projects-in-progress .badges-container + .project-title-wrapper { padding-right: 156px; }
+        #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper, #projects-in-progress .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 104px; }
 
         @media (max-width: 800px) {
             #subtab-paragons .project-list, .projects-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -382,7 +382,7 @@
             .content-wrapper { padding-top: max(35vh, 304px); }
             .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote,
             #artifacts .badges-container + .project-title-wrapper, #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper,
-            #major-projects .badges-container + .project-title-wrapper, #major-projects .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 0; }
+            #projects-in-progress .badges-container + .project-title-wrapper, #projects-in-progress .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 0; }
             .badges-container { position: relative; top: 0; margin-bottom: 10px; }
         }
         /* Very narrow phones: long collection names in the Writings menu may wrap instead of running off screen */
@@ -571,8 +571,8 @@
                 </ul>
             </section>
 
-            <section id="major-projects" class="section-container fade-in">
-                <h2><a href="#major-projects" class="interactive-element section-heading-link">Major Projects in Progress</a></h2>
+            <section id="projects-in-progress" class="section-container fade-in">
+                <h2><a href="#projects-in-progress" class="interactive-element section-heading-link">Projects-in-Progress</a></h2>
                 <ul class="project-list">
                     <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/complexemergencemodel.systems/" target="_blank" class="project-link-title interactive-element"><h3>The (Complex) Emergence Model</h3></a></div></li>
                     <li><div class="badges-container"><span class="badge">WIP</span></div><div class="project-title-wrapper"><a href="https://maxramsahoye.github.io/technologicaltransitions.agency/" target="_blank" class="project-link-title interactive-element"><h3>A Multi-Agent Model of Major Technological Transitions</h3></a></div></li>
@@ -1135,8 +1135,8 @@
             const width = entryList.getBoundingClientRect().width;
             if (width < 1) return;
             dividers.forEach(divider => { divider.style.width = width + 'px'; });
-            // Major Projects in Progress lines up with Artifacts below it
-            const majorList = document.querySelector('#major-projects .project-list');
+            // Projects-in-Progress lines up with Artifacts below it
+            const majorList = document.querySelector('#projects-in-progress .project-list');
             if (majorList) majorList.style.width = width + 'px';
         }
 
