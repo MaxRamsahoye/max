@@ -373,6 +373,8 @@
         #artifacts .project-title-wrapper, #projects-in-progress .project-title-wrapper { padding-right: 0; }
         #artifacts .badges-container + .project-title-wrapper, #projects-in-progress .badges-container + .project-title-wrapper { padding-right: 156px; }
         #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper, #projects-in-progress .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 104px; }
+        /* Projects-in-Progress is only as wide as its longest title plus its badge, with a small gap between them */
+        #projects-in-progress .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 68px; }
 
         @media (max-width: 800px) {
             #subtab-paragons .project-list, .projects-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -1135,9 +1137,6 @@
             const width = entryList.getBoundingClientRect().width;
             if (width < 1) return;
             dividers.forEach(divider => { divider.style.width = width + 'px'; });
-            // Projects-in-Progress lines up with Artifacts below it
-            const majorList = document.querySelector('#projects-in-progress .project-list');
-            if (majorList) majorList.style.width = width + 'px';
         }
 
         syncDividerWidth();
