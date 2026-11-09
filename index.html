@@ -203,9 +203,10 @@
         .hero-nav a { font-size: 1.4rem; }
         @media (max-width: 800px) { .hero-nav { gap: 10px 22px; } .hero-nav a { font-size: 1.25rem; } }
 
-        /* Phones and narrow tablets: the icon bar gets its own centred row at the top, and the section menu sits
-           centred beneath it, wrapping onto two rows if needed, so the two never overlap or run off screen */
-        @media (max-width: 800px) {
+        /* Phones, tablets and narrow windows (below 920px, where the menu no longer fits beside the icon bar):
+           the icon bar gets its own centred row at the top, and the section menu sits centred beneath it,
+           wrapping onto two rows if needed, so the two never overlap or run off screen */
+        @media (max-width: 920px) {
             #top-right-bar { top: 16px; left: 16px; right: 16px; justify-content: center; }
             .nav-links { top: 62px; left: 16px; right: 16px; transform: none; flex-wrap: wrap; justify-content: center; gap: 6px 22px; }
             /* the swatch note is centred under the whole bar so it stays on screen */
@@ -379,12 +380,15 @@
             #subtab-paragons .project-list, .projects-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
             .projects-columns .project-title-wrapper { padding-right: 0; }
             .email-link { font-size: 1.5rem; overflow-wrap: anywhere; }
-            /* the name always starts below the (smaller, lower) decorative ring, even on short phones */
-            .content-wrapper { padding-top: max(35vh, 304px); }
             .project-list .badges-container + .project-title-wrapper, .project-list .badges-container + p.project-quote,
             #artifacts .badges-container + .project-title-wrapper, #artifacts .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper,
             #projects-in-progress .badges-container + .project-title-wrapper, #projects-in-progress .badges-container:not(:has(.badge + .badge)) + .project-title-wrapper { padding-right: 0; }
             .badges-container { position: relative; top: 0; margin-bottom: 10px; }
+        }
+        /* with the stacked header (below 920px) the name always starts below the smaller, lower decorative ring,
+           even on short phones (after the base .content-wrapper rule, so that it takes effect) */
+        @media (max-width: 920px) {
+            .content-wrapper { padding-top: max(35vh, 304px); }
         }
         /* Very narrow phones: long collection names in the Writings menu may wrap instead of running off screen */
         @media (max-width: 480px) {
@@ -437,6 +441,7 @@
     <nav class="nav-links">
         <a href="#home" class="interactive-element">About</a>
         <a href="#mediums" class="interactive-element">Mediums</a>
+        <a href="#projects-in-progress" class="interactive-element">Projects-in-Progress</a>
         <a href="#artifacts" class="interactive-element">Artifacts</a>
         <a href="#writings" class="interactive-element">Writings</a>
         <a href="#projects" class="interactive-element">Projects</a>
@@ -536,6 +541,7 @@
                     <nav class="hero-nav" aria-label="Sections">
                         <a href="#home" class="interactive-element">About</a>
                         <a href="#mediums" class="interactive-element">Mediums</a>
+                        <a href="#projects-in-progress" class="interactive-element">Projects-in-Progress</a>
                         <a href="#artifacts" class="interactive-element">Artifacts</a>
                         <a href="#writings" class="interactive-element">Writings</a>
                         <a href="#projects" class="interactive-element">Projects</a>
